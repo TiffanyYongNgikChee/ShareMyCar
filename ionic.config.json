@@ -1,0 +1,7 @@
+{
+  "name": "Share-My_car",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
