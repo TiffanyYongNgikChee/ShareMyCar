@@ -1,20 +1,19 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>Available Cars</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+<ion-content class="container">
+  <div class="car-list">
+    <ion-card *ngFor="let car of cars">
+      <img [src]="car.image_url || 'assets/default-car.jpg'" alt="Car Image" />
+      <ion-card-header>
+        <ion-card-title>{{ car.make_model }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Price Per Hour:</strong> ${{ car.price_per_hour }}</p>
+      </ion-card-content>
+    </ion-card>
   </div>
 </ion-content>
