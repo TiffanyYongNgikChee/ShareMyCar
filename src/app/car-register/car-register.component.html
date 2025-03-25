@@ -1,0 +1,77 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>ShareMyCar</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="container">
+  <div class="form-container">
+    <h2>Register Your Car</h2>
+    <form [formGroup]="carForm" (ngSubmit)="submitCar()">
+      <ion-item>
+        <ion-label position="floating">Car Make & Model</ion-label>
+        <ion-input formControlName="make_model"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Car Type</ion-label>
+        <ion-input formControlName="car_type"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Year of Manufacture</ion-label>
+        <ion-input type="number" formControlName="year"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Color</ion-label>
+        <ion-input formControlName="color"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Transmission</ion-label>
+        <ion-input formControlName="transmission"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Seats</ion-label>
+        <ion-input type="number" formControlName="seats"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Fuel Type</ion-label>
+        <ion-input formControlName="fuel_type"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Engine</ion-label>
+        <ion-input formControlName="engine"></ion-input>
+      </ion-item>
+
+      <h3>Pricing & Rental Conditions</h3>
+
+      <ion-item>
+        <ion-label position="floating">Price per Hour ($)</ion-label>
+        <ion-input type="number" formControlName="price_per_hour"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Price per Day ($)</ion-label>
+        <ion-input type="number" formControlName="price_per_day"></ion-input>
+      </ion-item>
+
+      <h3>Pickup & Availability</h3>
+      <ion-item>
+        <ion-label position="floating">Pick-Up Location</ion-label>
+        <ion-input formControlName="pickup_location"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Car Image URL</ion-label>
+        <ion-input formControlName="image_url"></ion-input>
+      </ion-item>
+
+      <ion-button expand="full" type="submit" [disabled]="!carForm.valid">Register</ion-button>
+    </form>
+  </div>
+</ion-content>
