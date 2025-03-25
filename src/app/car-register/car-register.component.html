@@ -62,9 +62,13 @@
 
       <h3>Pickup & Availability</h3>
       <ion-item>
-        <ion-label position="floating">Pick-Up Location</ion-label>
-        <ion-input formControlName="pickup_location"></ion-input>
+        <ion-label>Pickup Location</ion-label>
+        <ion-input id="pickupInput" #pickupInput type="text" formControlName="pickup_location" placeholder="Enter Pickup Location"></ion-input>
       </ion-item>
+          
+      
+      <!-- Map Display -->
+      <div id="map"></div>
 
       <ion-item>
         <ion-label position="floating">Car Image URL</ion-label>
