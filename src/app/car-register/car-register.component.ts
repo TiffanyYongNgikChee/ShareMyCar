@@ -1,11 +1,9 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { db } from '../../main'; // Adjust based on your structure
 import { collection, addDoc } from 'firebase/firestore';
-
-declare var google: any; // Ensure Google Maps is available
 
 @Component({
   selector: 'app-car-register',
@@ -14,14 +12,15 @@ declare var google: any; // Ensure Google Maps is available
   templateUrl: './car-register.component.html',
   styleUrls: ['./car-register.component.scss'],
 })
-export class CarRegisterComponent implements AfterViewInit {
-  @ViewChild('pickupInput', { static: false }) pickupInput!: ElementRef;
+export class CarRegisterComponent implements OnInit, AfterViewInit {
+  @ViewChild('pickupInput', { read: ElementRef }) pickupInput!: ElementRef;
 
   carForm: FormGroup;
   latitude: number = 0;
   longitude: number = 0;
   map: any;
   marker: any;
+  autocomplete: any;
 
   constructor(private fb: FormBuilder) {
     this.carForm = this.fb.group({
@@ -35,61 +34,80 @@ export class CarRegisterComponent implements AfterViewInit {
       engine: [''],
       price_per_hour: ['', Validators.min(0)],
       price_per_day: ['', Validators.min(0)],
-      fuel_charge: [''],
-      mileage_limit: [''],
-      insurance_fee: [''],
-      deposit: [''],
+      fuel_charge: ['', Validators.min(0)],
+      mileage_limit: ['', Validators.min(0)],
+      insurance_fee: ['', Validators.min(0)],
+      deposit: ['', Validators.min(0)],
       pickup_location: ['', Validators.required],
-      image_url: [''], // Allow users to input a car image URL
+      image_url: [''],
       latitude: [''], 
       longitude: ['']
     });
   }
 
-  ngAfterViewInit() {
-    // Use setTimeout to ensure that the input field is available before initializing the autocomplete.
-    setTimeout(() => {
-      this.loadGoogleMapsApi();
-    }, 1000); // Delay slightly to ensure element is available
+  ngOnInit() {
+    this.loadGoogleMapsScript();
   }
 
-  loadGoogleMapsApi() {
-    // Check if google is already defined, otherwise load the script
-    if (typeof google === 'undefined' || !google.maps) {
+  ngAfterViewInit() {
+    // Slight delay to ensure Ionic input is fully rendered
+    setTimeout(() => {
+      this.setupAutocomplete();
+    }, 100);
+  }
+
+  loadGoogleMapsScript() {
+    if (!(window as any).google || !(window as any).google.maps) {
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAjjR0-3zkTPmljMueREFtfZjl-Kr-bs6A&libraries=places`; // Replace with your actual API key
+      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAjjR0-3zkTPmljMueREFtfZjl-Kr-bs6A&libraries=places`;
       script.async = true;
+      script.defer = true;
       script.onload = () => {
-        this.loadGoogleMapsAutocomplete();
+        this.setupAutocomplete();
       };
       document.head.appendChild(script);
-    } else {
-      this.loadGoogleMapsAutocomplete();
     }
   }
 
-  loadGoogleMapsAutocomplete() {
-    if (!this.pickupInput || !this.pickupInput.nativeElement) {
-      console.error('Pickup input element not found');
+  setupAutocomplete() {
+    // For Ionic input, we need to get the native input element
+    const inputElement = this.pickupInput?.nativeElement?.querySelector('input');
+    
+    if (!inputElement) {
+      console.error('Native input element not found');
       return;
     }
 
-    // Initialize the Autocomplete object for the input field
-    const autocomplete = new google.maps.places.Autocomplete(this.pickupInput.nativeElement);
+    console.log('Setting up Autocomplete for Ionic input', inputElement);
 
-    // Listen for the place change event and update the form with latitude and longitude
-    autocomplete.addListener('place_changed', () => {
-      const place = autocomplete.getPlace();
-      if (place.geometry) {
-        this.latitude = place.geometry.location.lat();
-        this.longitude = place.geometry.location.lng();
-        this.carForm.patchValue({ latitude: this.latitude, longitude: this.longitude });
+    // Create autocomplete instance
+    this.autocomplete = new (window as any).google.maps.places.Autocomplete(
+      inputElement, 
+      { types: ['geocode'] }
+    );
 
-        // Update the map to reflect the new location
-        this.initMap();
-      } else {
-        console.error('No geometry found for the selected place.');
+    // Add listener for place selection
+    this.autocomplete.addListener('place_changed', () => {
+      const place = this.autocomplete.getPlace();
+      
+      if (!place.geometry) {
+        console.error('No geometry found for the selected place');
+        return;
       }
+
+      // Update latitude and longitude
+      this.latitude = place.geometry.location.lat();
+      this.longitude = place.geometry.location.lng();
+
+      // Update form values
+      this.carForm.patchValue({
+        pickup_location: place.formatted_address,
+        latitude: this.latitude,
+        longitude: this.longitude
+      });
+
+      // Initialize or update map
+      this.initMap();
     });
   }
 
@@ -98,22 +116,26 @@ export class CarRegisterComponent implements AfterViewInit {
 
     const location = { lat: this.latitude, lng: this.longitude };
 
+    // Create map if it doesn't exist
     if (!this.map) {
-      this.map = new google.maps.Map(document.getElementById('map') as HTMLElement, {
+      this.map = new (window as any).google.maps.Map(document.getElementById('map') as HTMLElement, {
         center: location,
         zoom: 15
       });
     }
 
+    // Remove existing marker
     if (this.marker) {
       this.marker.setMap(null);
     }
 
-    this.marker = new google.maps.Marker({
+    // Add new marker
+    this.marker = new (window as any).google.maps.Marker({
       position: location,
       map: this.map
     });
 
+    // Center the map
     this.map.setCenter(location);
   }
 
@@ -130,12 +152,12 @@ export class CarRegisterComponent implements AfterViewInit {
       const docRef = await addDoc(carsCollection, carData);
       console.log('Car registered with ID:', docRef.id);
 
-      // Reset form and marker
+      // Reset form and map
       this.carForm.reset();
       this.latitude = 0;
       this.longitude = 0;
-      this.marker?.setMap(null);  // Remove the existing marker
-      this.map?.setCenter({ lat: 0, lng: 0 });  // Reset the map center
+      this.marker?.setMap(null);
+      this.map?.setCenter({ lat: 0, lng: 0 });
 
     } catch (error) {
       console.error('Error adding car:', error);
