@@ -1,51 +1,57 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '.././services/auth.service';
+import { LoadingController, ToastController } from '@ionic/angular';
 import { IonicModule } from '@ionic/angular';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { db } from '../../main'; // Adjust path to your db export
-import { collection, addDoc } from 'firebase/firestore';
-
+import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register-acc',
-  standalone: true,
-  imports: [CommonModule, IonicModule, ReactiveFormsModule],
   templateUrl: './register-acc.component.html',
+  imports: [CommonModule, IonicModule, ReactiveFormsModule],
   styleUrls: ['./register-acc.component.scss'],
 })
 export class RegisterAccComponent {
 
-  userForm: FormGroup;
-  showToast = false;
-  
-  constructor(private fb: FormBuilder) {
-    this.userForm = this.fb.group({
-      name: ['', Validators.required],
+  registerForm: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private loadingCtrl: LoadingController,
+    private toastCtrl: ToastController
+  ) {
+    this.registerForm = this.fb.group({
+      username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phone: [''],
-      address: ['']
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      phone: ['', [Validators.required, Validators.pattern('^[0-9]{10,15}$')]],
     });
   }
-  
-  async submitForm() {
-    if (!this.userForm.valid) return;
-    
-    try {
-      const usersCollection = collection(db, 'users');
-      const userData = {
-        ...this.userForm.value,
-        createdAt: new Date()
-      };
-      
-      const docRef = await addDoc(usersCollection, userData);
-      console.log('User added with ID:', docRef.id);
-      
-      // Reset form and show success message
-      this.userForm.reset();
-      this.showToast = true;
-    } catch (error) {
-      console.error('Error adding user:', error);
-      // You could add error handling here (show error toast, etc.)
+
+  async register() {
+    if (this.registerForm.invalid) {
+      this.showToast('Please fill in all fields correctly.');
+      return;
     }
+
+    const { username, email, password, phone } = this.registerForm.value;
+    const loading = await this.loadingCtrl.create({ message: 'Registering...' });
+    await loading.present();
+
+    try {
+      await this.authService.register(email, password, username, phone);
+      await loading.dismiss();
+      this.showToast('Registration successful! Check your email for verification.');
+    } catch (error: any) {
+      await loading.dismiss();
+      this.showToast(error.message || 'Registration failed.');
+    }
+  }
+
+  private async showToast(message: string) {
+    const toast = await this.toastCtrl.create({ message, duration: 3000, position: 'top' });
+    toast.present();
   }
 }

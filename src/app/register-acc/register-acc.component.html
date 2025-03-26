@@ -1,51 +1,33 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Add New User</ion-title>
+    <ion-title>Register</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form [formGroup]="userForm" (ngSubmit)="submitForm()">
+  <form [formGroup]="registerForm" (ngSubmit)="register()">
     <ion-item>
-      <ion-label position="floating">Name</ion-label>
-      <ion-input formControlName="name" type="text"></ion-input>
-      <ion-note slot="error" *ngIf="userForm.controls['name'].touched && userForm.controls['name'].errors?.['required']">
-        Name is required
-      </ion-note>
+      <ion-label position="floating">Username</ion-label>
+      <ion-input formControlName="username"></ion-input>
     </ion-item>
-    
+
     <ion-item>
       <ion-label position="floating">Email</ion-label>
-      <ion-input formControlName="email" type="email"></ion-input>
-      <ion-note slot="error" *ngIf="userForm.controls['email'].touched && userForm.controls['email'].errors?.['required']">
-        Email is required
-      </ion-note>
-      <ion-note slot="error" *ngIf="userForm.controls['email'].touched && userForm.controls['email'].errors?.['email']">
-        Please enter a valid email
-      </ion-note>
+      <ion-input type="email" formControlName="email"></ion-input>
     </ion-item>
-    
+
     <ion-item>
-      <ion-label position="floating">Phone</ion-label>
-      <ion-input formControlName="phone" type="tel"></ion-input>
+      <ion-label position="floating">Password</ion-label>
+      <ion-input type="password" formControlName="password"></ion-input>
     </ion-item>
-    
+
     <ion-item>
-      <ion-label position="floating">Address</ion-label>
-      <ion-textarea formControlName="address" rows="3"></ion-textarea>
+      <ion-label position="floating">Phone Number</ion-label>
+      <ion-input type="tel" formControlName="phone"></ion-input>
     </ion-item>
-    
-    <div class="ion-padding">
-      <ion-button expand="block" type="submit" [disabled]="!userForm.valid">
-        Save User
-      </ion-button>
-    </div>
+
+    <ion-button expand="full" type="submit" [disabled]="registerForm.invalid">
+      Register
+    </ion-button>
   </form>
-  
-  <ion-toast
-    [isOpen]="showToast"
-    message="User added successfully!"
-    [duration]="3000"
-    (didDismiss)="showToast = false"
-  ></ion-toast>
 </ion-content>
