@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card *ngIf="user">
+    <ion-card-header>
+      <ion-card-title>{{ user.displayName || 'User' }}</ion-card-title>
+      <ion-card-subtitle>{{ user.email }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Phone:</strong> {{ user.phoneNumber || 'Not set' }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="full" color="danger" (click)="logout()">Logout</ion-button>
+</ion-content>

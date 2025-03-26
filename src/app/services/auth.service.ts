@@ -3,6 +3,7 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVe
 import { collection, doc, setDoc } from 'firebase/firestore';
 import { db } from '../../main';  // Import Firestore instance
 import { Router } from '@angular/router';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -40,6 +41,13 @@ export class AuthService {
       console.error('Login error:', error);
       throw error;
     }
+  }
+  getCurrentUser(): Promise<any> {
+    return new Promise((resolve) => {
+      onAuthStateChanged(this.auth, (user) => {
+        resolve(user);
+      });
+    });
   }
 
   async logout() {

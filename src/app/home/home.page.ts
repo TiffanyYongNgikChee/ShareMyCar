@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../main'; // Adjust based on your structure
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -14,7 +16,7 @@ import { db } from '../../main'; // Adjust based on your structure
 export class HomePage implements OnInit {
   cars: any[] = []; // Store fetched car data
 
-  constructor() {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   async ngOnInit() {
     await this.loadCars();
@@ -33,6 +35,14 @@ export class HomePage implements OnInit {
       console.log('Fetched Cars:', this.cars);
     } catch (error) {
       console.error('Error fetching cars:', error);
+    }
+  }
+  async goToProfile() {
+    const user = await this.authService.getCurrentUser();
+    if (user) {
+      this.router.navigate(['/profile']);
+    } else {
+      this.router.navigate(['/login']);
     }
   }
 }
