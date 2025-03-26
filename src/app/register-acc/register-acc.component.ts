@@ -5,11 +5,12 @@ import { LoadingController, ToastController } from '@ionic/angular';
 import { IonicModule } from '@ionic/angular';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-register-acc',
   templateUrl: './register-acc.component.html',
-  imports: [CommonModule, IonicModule, ReactiveFormsModule],
+  imports: [CommonModule, IonicModule, ReactiveFormsModule,RouterModule],
   styleUrls: ['./register-acc.component.scss'],
 })
 export class RegisterAccComponent {

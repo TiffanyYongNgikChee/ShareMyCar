@@ -1,33 +1,49 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Boldonse&family=Oswald:wght@700&display=swap" rel="stylesheet">
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Register</ion-title>
+  <ion-toolbar class="header-toolbar">
+    <div class="header-content">
+      <h2>Welcome to</h2>
+      <h1>ShareMyCar</h1>
+      <p class="subtitle">Sign up to continue</p>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <form [formGroup]="registerForm" (ngSubmit)="register()">
-    <ion-item>
-      <ion-label position="floating">Username</ion-label>
-      <ion-input formControlName="username"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="email" formControlName="email"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="floating">Password</ion-label>
-      <ion-input type="password" formControlName="password"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="floating">Phone Number</ion-label>
-      <ion-input type="tel" formControlName="phone"></ion-input>
-    </ion-item>
-
-    <ion-button expand="full" type="submit" [disabled]="registerForm.invalid">
-      Register
-    </ion-button>
-  </form>
+<ion-content class="ion-padding content-background">
+  <div class="signup-container">
+    <div class="toggle-buttons">
+      <button class="toggle-btn">Login</button>
+      <button class="toggle-btn active">Sign Up</button>
+    </div>
+    <form [formGroup]="registerForm" (ngSubmit)="register()">
+      <ion-item class="input-item">
+        <ion-input placeholder="Username" formControlName="username"></ion-input>
+      </ion-item>
+      
+      <ion-item class="input-item">
+        <ion-input type="email" placeholder="Email" formControlName="email"></ion-input>
+      </ion-item>
+      
+      <ion-item class="input-item">
+        <ion-input type="password" placeholder="Password" formControlName="password"></ion-input>
+      </ion-item>
+      
+      <ion-item class="input-item">
+        <ion-input type="tel" placeholder="Phone Number" formControlName="phone"></ion-input>
+      </ion-item>
+      
+      <div class="terms-container">
+        <ion-checkbox formControlName="terms"></ion-checkbox>
+        <ion-label>By pressing "submit" you agree to our <a href="#">Terms & Conditions</a></ion-label>
+      </div>      
+      
+      <div class="submit-btn-container">
+        <button class="submit-btn" type="submit" [disabled]="registerForm.invalid">
+          ->
+        </button>
+      </div>
+    </form>
+  </div>
 </ion-content>

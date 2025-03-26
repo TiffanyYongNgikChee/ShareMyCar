@@ -11,11 +11,11 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'user-register',
+    path: 'register',
     loadComponent: () => import('./user-register/user-register.component').then((m) => m.UserRegisterComponent),
   },
   {
-    path: 'register',
+    path: 'user-register',
     loadComponent: () => import('./register-acc/register-acc.component').then((m) => m.RegisterAccComponent),
   },
   {

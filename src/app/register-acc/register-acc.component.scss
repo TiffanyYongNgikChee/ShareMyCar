@@ -1,0 +1,95 @@
+.header-toolbar {
+    background: #2b023d;
+    text-align: left;
+    padding: 20px;
+  }
+  .header-content h2 {
+    font-size: 25px;
+    color: #4a4a8a;
+    font-family: "Boldonse", system-ui;
+    font-weight: 400;
+    font-style: normal;
+  }
+  .header-content h1 {
+    font-size: 45px;
+    color: #6a5acd;
+    font-family: "Oswald", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+  }
+  .subtitle {
+    font-size: 14px;
+    color: #6a5acd;
+    font-family: "Boldonse", system-ui;
+    font-weight: 400;
+    font-style: normal;
+  }
+  .content-background {
+    background: linear-gradient(to bottom, #e5e5ff, #ffffff);
+    text-align: center;
+  }
+  .signup-container {
+    background: white;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  .toggle-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 15px;
+  }
+  .toggle-btn {
+    background: none;
+    border: none;
+    font-weight: bold;
+    color: gray;
+  }
+  .toggle-btn.active {
+    color: black;
+    border-bottom: 2px solid black;
+  }
+  .input-item {
+    margin: 10px 0;
+    border-radius: 10px;
+    background: #f5f5f5;
+  }
+  .terms-container {
+    display: flex;
+    align-items: center; /* Ensures vertical alignment */
+    gap: 8px; /* Reduces space between checkbox and text */
+  }
+  
+  .terms-container ion-checkbox {
+    --size: 16px; /* Adjust checkbox size if needed */
+  }
+  
+  .terms-container ion-label {
+    font-size: 12px;
+    flex: 1; /* Prevents unnecessary spacing */
+  }
+  
+  .submit-btn-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+  }
+  .submit-btn {
+    background: #ff66b2;
+    color: white;
+    border: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  ion-content {
+    --background: linear-gradient(to bottom, #e5e5ff, #ffffff);
+  }
