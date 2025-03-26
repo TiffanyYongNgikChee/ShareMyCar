@@ -1,3 +1,25 @@
-<p>
-  login works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="loginForm" (ngSubmit)="login()">
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input type="email" formControlName="email"></ion-input>
+    </ion-item>
+    
+    <ion-item>
+      <ion-label position="floating">Password</ion-label>
+      <ion-input type="password" formControlName="password"></ion-input>
+    </ion-item>
+
+    <ion-button expand="full" type="submit" [disabled]="loginForm.invalid">Login</ion-button>
+  </form>
+
+  <p class="center-text">
+    Don't have an account? <a routerLink="/register">Register</a>
+  </p>
+</ion-content>

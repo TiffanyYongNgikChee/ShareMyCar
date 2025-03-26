@@ -35,7 +35,7 @@ export class AuthService {
       if (!userCredential.user.emailVerified) {
         throw new Error('Please verify your email before logging in.');
       }
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/home']);
     } catch (error) {
       console.error('Login error:', error);
       throw error;
