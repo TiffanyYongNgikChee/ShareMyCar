@@ -14,7 +14,7 @@
 <ion-content class="ion-padding content-background">
   <div class="signup-container">
     <div class="toggle-buttons">
-      <button class="toggle-btn">Login</button>
+      <button class="toggle-btn" [routerLink]="['/login']">Login</button>
       <button class="toggle-btn active">Sign Up</button>
     </div>
     <form [formGroup]="registerForm" (ngSubmit)="register()">
@@ -35,7 +35,7 @@
       </ion-item>
       
       <div class="terms-container">
-        <ion-checkbox formControlName="terms"></ion-checkbox>
+        <ion-checkbox></ion-checkbox>
         <ion-label>By pressing "submit" you agree to our <a href="#">Terms & Conditions</a></ion-label>
       </div>      
       

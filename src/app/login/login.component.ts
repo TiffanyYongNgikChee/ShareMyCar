@@ -6,10 +6,11 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoadingController } from '@ionic/angular';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, IonicModule,ReactiveFormsModule],
+  imports: [CommonModule, IonicModule,ReactiveFormsModule,RouterLink],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
