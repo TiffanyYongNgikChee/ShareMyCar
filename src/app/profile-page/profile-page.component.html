@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Your profile content here -->
+  
+  <!-- Role switcher -->
+  <ion-segment [value]="currentRole" (ionChange)="changeRole($any($event.detail.value))">
+    <ion-segment-button value="rider">
+      <ion-label>Rider</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="owner">
+      <ion-label>Owner</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Car icon -->
+  <div class="car-icon" (click)="onCarIconClick()">
+    <ion-icon name="car-sport"></ion-icon>
+  </div>
+</ion-content>

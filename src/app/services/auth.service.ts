@@ -4,6 +4,7 @@ import { collection, doc, setDoc,getDoc } from 'firebase/firestore';
 import { db } from '../../main';  // Import Firestore instance
 import { Router } from '@angular/router';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+type UserRole = 'rider' | 'owner';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -12,16 +13,17 @@ export class AuthService {
 
   constructor(private router: Router) {}
 
-  async register(email: string, password: string, username: string, phone: string, role: string = 'rider') {
+  // Update register method to include default role
+  async register(email: string, password: string, username: string, phone: string, role: UserRole = 'rider') {
     try {
       const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
       if (userCredential.user) {
-        await setDoc(doc(collection(db, 'users'), userCredential.user.uid), {
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
           uid: userCredential.user.uid,
           username,
           email,
           phone,
-          role, // Store the user's role
+          role, // Now always has a value
           verified: false
         });
         await sendEmailVerification(userCredential.user);
@@ -71,9 +73,20 @@ export class AuthService {
   }
 
   // Get the current user's role
-  getCurrentUserRole(): string | null {
-    return this.currentUserRole;
-  }// Update the user's role
+  async getCurrentUserRole(uid: string): Promise<UserRole> {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', uid));
+      if (userDoc.exists()) {
+        // Return the role if it exists, otherwise default to 'rider'
+        return userDoc.data()['role'] || 'rider';
+      }
+      return 'rider'; // Default if user doc doesn't exist
+    } catch (error) {
+      console.error('Error getting user role:', error);
+      return 'rider'; // Default if error occurs
+    }
+  }
+
   async updateUserRole(uid: string, newRole: string): Promise<void> {
     try {
       await setDoc(doc(db, 'users', uid), { role: newRole }, { merge: true });
