@@ -23,6 +23,8 @@ export class AuthService {
           username,
           email,
           phone,
+          address: '', // Initialize empty
+          profilePicture: '', // URL will go here
           role, // Now always has a value
           verified: false
         });

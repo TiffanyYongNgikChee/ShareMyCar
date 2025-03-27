@@ -1,0 +1,58 @@
+.profile-picture-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+    
+    .avatar-upload {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      cursor: pointer;
+      
+      .profile-avatar {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .upload-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.5);
+        color: white;
+        text-align: center;
+        padding: 8px;
+      }
+    }
+    
+    .upload-button {
+      margin-top: 10px;
+    }
+  }
+  
+  .role-switcher {
+    margin: 15px auto;
+    max-width: 300px;
+  }
+  
+  .profile-form {
+    background: transparent;
+    margin: 20px 0;
+  }
+  
+  .action-buttons {
+    padding: 0 16px;
+    
+    ion-button {
+      margin-bottom: 12px;
+    }
+    
+    .car-management-button {
+      --border-color: var(--ion-color-primary);
+    }
+  }

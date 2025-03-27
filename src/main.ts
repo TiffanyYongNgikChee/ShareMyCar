@@ -7,6 +7,7 @@ import { routes } from './app/app.routes';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { getStorage} from 'firebase/storage';
 
 // Initialize Firebase directly
 const firebaseConfig = {
@@ -19,10 +20,11 @@ const firebaseConfig = {
   measurementId: "G-4LKVF26SBL"
 };
 
-// Initialize Firebase globally
-const app = initializeApp(firebaseConfig);
+// Add this export to your existing main.ts
+export const app = initializeApp(firebaseConfig); // Change from 'const' to 'export const'
 export const db = getFirestore(app);
-export const auth = getAuth(app); 
+export const auth = getAuth(app);
+export const storage = getStorage(app); // Add this line
 
 bootstrapApplication(AppComponent, {
   providers: [

@@ -5,10 +5,44 @@
 </ion-header>
 
 <ion-content>
-  <!-- Your profile content here -->
-  
-  <!-- Role switcher -->
-  <ion-segment [value]="currentRole" (ionChange)="changeRole($any($event.detail.value))">
+  <!-- Loading indicator -->
+  <ion-loading [isOpen]="isLoading" message="Loading..."></ion-loading>
+
+  <!-- Profile Picture Section -->
+  <div class="profile-picture-container">
+    <div class="avatar-upload" (click)="fileInput.click()">
+      <img 
+        [src]="previewUrl || userData.profilePicture || 'assets/default-profile.png'" 
+        class="profile-avatar"
+      />
+      <div class="upload-overlay">
+        <ion-icon name="camera"></ion-icon>
+      </div>
+    </div>
+    <input 
+      #fileInput 
+      type="file" 
+      accept="image/*" 
+      hidden 
+      (change)="onFileSelected($event)"
+    />
+    <ion-button 
+      fill="clear" 
+      (click)="uploadPicture()" 
+      *ngIf="selectedFile"
+      class="upload-button"
+    >
+      <ion-icon name="cloud-upload" slot="start"></ion-icon>
+      Upload
+    </ion-button>
+  </div>
+
+  <!-- Role Switcher -->
+  <ion-segment 
+    [value]="currentRole" 
+    (ionChange)="changeRole($any($event.detail.value))"
+    class="role-switcher"
+  >
     <ion-segment-button value="rider">
       <ion-label>Rider</ion-label>
     </ion-segment-button>
@@ -17,8 +51,65 @@
     </ion-segment-button>
   </ion-segment>
 
-  <!-- Car icon -->
-  <div class="car-icon" (click)="onCarIconClick()">
-    <ion-icon name="car-sport"></ion-icon>
+  <!-- Profile Form -->
+  <ion-list class="profile-form">
+    <ion-item>
+      <ion-label position="stacked">Username</ion-label>
+      <ion-input 
+        [(ngModel)]="userData.username" 
+        type="text"
+        required
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Email</ion-label>
+      <ion-input 
+        [(ngModel)]="userData.email" 
+        type="email" 
+        [disabled]="true"
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Phone Number</ion-label>
+      <ion-input 
+        [(ngModel)]="userData.phone" 
+        type="tel"
+        placeholder="Enter phone number"
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Home Address</ion-label>
+      <ion-textarea 
+        [(ngModel)]="userData.address" 
+        rows="3"
+        placeholder="Enter your full address"
+      ></ion-textarea>
+    </ion-item>
+  </ion-list>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <ion-button 
+      expand="block" 
+      (click)="updateProfile()"
+      [disabled]="isLoading"
+    >
+      <ion-icon name="save" slot="start"></ion-icon>
+      Save Profile
+    </ion-button>
+
+    <!-- Car Management Button -->
+    <ion-button 
+      expand="block" 
+      fill="outline" 
+      (click)="onCarIconClick()"
+      class="car-management-button"
+    >
+      <ion-icon name="car-sport" slot="start"></ion-icon>
+      {{ currentRole === 'owner' ? 'Manage My Cars' : 'View Available Cars' }}
+    </ion-button>
   </div>
 </ion-content>
