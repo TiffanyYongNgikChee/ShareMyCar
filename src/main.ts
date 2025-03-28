@@ -8,6 +8,8 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getStorage} from 'firebase/storage';
+import { provideFirebaseApp} from '@angular/fire/app';
+import { provideFirestore} from '@angular/fire/firestore';
 
 // Initialize Firebase directly
 const firebaseConfig = {
@@ -31,6 +33,8 @@ bootstrapApplication(AppComponent, {
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
+    provideFirebaseApp(() => initializeApp(firebaseConfig)),
+    provideFirestore(() => getFirestore()),
   ],
 }).catch(err => console.error(err));
 
