@@ -12,7 +12,7 @@
   <div class="profile-picture-container">
     <div class="avatar-upload" (click)="fileInput.click()">
       <img 
-        [src]="previewUrl || userData.profilePicture || 'assets/default-profile.png'" 
+        [src]="previewUrl || userData.profilePicture || './assets/profile.png'" 
         class="profile-avatar"
       />
       <div class="upload-overlay">
