@@ -2,8 +2,10 @@ import { Component, AfterViewInit, ViewChild, ElementRef, OnInit } from '@angula
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { db } from '../../main'; // Adjust based on your structure
+import { db, auth } from '../../main'; // Make sure auth is exported from main.ts
 import { collection, addDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-car-register',
@@ -14,6 +16,7 @@ import { collection, addDoc } from 'firebase/firestore';
 })
 export class CarRegisterComponent implements OnInit, AfterViewInit {
   @ViewChild('pickupInput', { read: ElementRef }) pickupInput!: ElementRef;
+  @ViewChild('fileInput') fileInput!: ElementRef;
 
   carForm: FormGroup;
   latitude: number = 0;
@@ -21,8 +24,14 @@ export class CarRegisterComponent implements OnInit, AfterViewInit {
   map: any;
   marker: any;
   autocomplete: any;
+  selectedImages: File[] = [];
+  imagePreviews: string[] = [];
+  isLoading = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router
+  ) {
     this.carForm = this.fb.group({
       make_model: ['', Validators.required],
       car_type: ['', Validators.required],
@@ -32,16 +41,12 @@ export class CarRegisterComponent implements OnInit, AfterViewInit {
       seats: ['', Validators.min(1)],
       fuel_type: [''],
       engine: [''],
-      price_per_hour: ['', Validators.min(0)],
-      price_per_day: ['', Validators.min(0)],
-      fuel_charge: ['', Validators.min(0)],
+      price_per_day: ['', Validators.min(0)], // Changed to just daily rate
       mileage_limit: ['', Validators.min(0)],
-      insurance_fee: ['', Validators.min(0)],
-      deposit: ['', Validators.min(0)],
       pickup_location: ['', Validators.required],
-      image_url: [''],
-      latitude: [''], 
-      longitude: ['']
+      latitude: [''],
+      longitude: [''],
+      features: [[]] // Added features array
     });
   }
 
@@ -50,12 +55,78 @@ export class CarRegisterComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Slight delay to ensure Ionic input is fully rendered
     setTimeout(() => {
       this.setupAutocomplete();
     }, 100);
   }
 
+  // Update your onImageSelected method to include proper typing
+onImageSelected(event: Event) {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    this.selectedImages = Array.from(input.files);
+    this.imagePreviews = [];
+    
+    // Add proper type casting here
+    Array.from(input.files).forEach((file: File) => {
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        if (e.target?.result) {
+          this.imagePreviews.push(e.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+}
+
+// Update your uploadImages method with proper typing
+async uploadImages(uid: string): Promise<string[]> {
+  const storage = getStorage();
+  const uploadPromises = this.selectedImages.map(async (file: File) => {
+    const storageRef = ref(storage, `cars/${uid}/${file.name}_${Date.now()}`);
+    const snapshot = await uploadBytes(storageRef, file);
+    return getDownloadURL(snapshot.ref);
+  });
+  return Promise.all(uploadPromises);
+}
+  // Modified submit method
+  async submitCar() {
+    if (!this.carForm.valid || this.isLoading) return;
+    this.isLoading = true;
+
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error('User not authenticated');
+
+      // Upload images if any
+      const imageUrls = this.selectedImages.length > 0 
+        ? await this.uploadImages(user.uid)
+        : [];
+
+      const carData = {
+        ...this.carForm.value,
+        ownerId: user.uid,
+        images: imageUrls,
+        isAvailable: true,
+        createdAt: new Date(),
+        licensePlate: '', // Add this field if needed
+        dailyRate: this.carForm.value.price_per_day // Map to consistent field name
+      };
+
+      const carsCollection = collection(db, 'cars');
+      await addDoc(carsCollection, carData);
+      
+      this.router.navigate(['/owner-car-management']);
+      
+    } catch (error) {
+      console.error('Error registering car:', error);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  // Keep your existing Google Maps methods
   loadGoogleMapsScript() {
     if (!(window as any).google || !(window as any).google.maps) {
       const script = document.createElement('script');
@@ -69,24 +140,23 @@ export class CarRegisterComponent implements OnInit, AfterViewInit {
     }
   }
 
+  removeImage(index: number) {
+    this.selectedImages.splice(index, 1);
+    this.imagePreviews.splice(index, 1);
+  }
+
   setupAutocomplete() {
-    // For Ionic input, we need to get the native input element
     const inputElement = this.pickupInput?.nativeElement?.querySelector('input');
-    
     if (!inputElement) {
       console.error('Native input element not found');
       return;
     }
 
-    console.log('Setting up Autocomplete for Ionic input', inputElement);
-
-    // Create autocomplete instance
     this.autocomplete = new (window as any).google.maps.places.Autocomplete(
       inputElement, 
       { types: ['geocode'] }
     );
 
-    // Add listener for place selection
     this.autocomplete.addListener('place_changed', () => {
       const place = this.autocomplete.getPlace();
       
@@ -95,18 +165,15 @@ export class CarRegisterComponent implements OnInit, AfterViewInit {
         return;
       }
 
-      // Update latitude and longitude
       this.latitude = place.geometry.location.lat();
       this.longitude = place.geometry.location.lng();
 
-      // Update form values
       this.carForm.patchValue({
         pickup_location: place.formatted_address,
         latitude: this.latitude,
         longitude: this.longitude
       });
 
-      // Initialize or update map
       this.initMap();
     });
   }
@@ -116,7 +183,6 @@ export class CarRegisterComponent implements OnInit, AfterViewInit {
 
     const location = { lat: this.latitude, lng: this.longitude };
 
-    // Create map if it doesn't exist
     if (!this.map) {
       this.map = new (window as any).google.maps.Map(document.getElementById('map') as HTMLElement, {
         center: location,
@@ -124,43 +190,15 @@ export class CarRegisterComponent implements OnInit, AfterViewInit {
       });
     }
 
-    // Remove existing marker
     if (this.marker) {
       this.marker.setMap(null);
     }
 
-    // Add new marker
     this.marker = new (window as any).google.maps.Marker({
       position: location,
       map: this.map
     });
 
-    // Center the map
     this.map.setCenter(location);
-  }
-
-  async submitCar() {
-    if (!this.carForm.valid) return;
-
-    try {
-      const carsCollection = collection(db, 'cars');
-      const carData = {
-        ...this.carForm.value,
-        created_at: new Date()
-      };
-
-      const docRef = await addDoc(carsCollection, carData);
-      console.log('Car registered with ID:', docRef.id);
-
-      // Reset form and map
-      this.carForm.reset();
-      this.latitude = 0;
-      this.longitude = 0;
-      this.marker?.setMap(null);
-      this.map?.setCenter({ lat: 0, lng: 0 });
-
-    } catch (error) {
-      console.error('Error adding car:', error);
-    }
   }
 }

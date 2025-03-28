@@ -1,26 +1,78 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>ShareMyCar</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/owner-car-management"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Register Your Car</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="container">
   <div class="form-container">
-    <h2>Register Your Car</h2>
     <form [formGroup]="carForm" (ngSubmit)="submitCar()">
+      <!-- Car Images Section -->
       <ion-item>
-        <ion-label position="floating">Car Make & Model</ion-label>
-        <ion-input formControlName="make_model"></ion-input>
+        <ion-label position="stacked">Car Images (Max 5)</ion-label>
+        <input 
+          type="file" 
+          multiple 
+          accept="image/*" 
+          (change)="onImageSelected($event)" 
+          #fileInput 
+          hidden
+        >
+        <ion-button 
+          expand="block" 
+          fill="outline" 
+          (click)="fileInput.click()"
+        >
+          <ion-icon name="images" slot="start"></ion-icon>
+          Select Images
+        </ion-button>
+      </ion-item>
+
+      <!-- Image Previews -->
+      <ion-grid *ngIf="imagePreviews.length > 0">
+        <ion-row>
+          <ion-col size="6" *ngFor="let preview of imagePreviews; let i = index">
+            <div class="image-preview-container">
+              <img [src]="preview" class="image-preview">
+              <ion-button 
+                fill="clear" 
+                color="danger" 
+                (click)="removeImage(i)"
+                class="remove-btn"
+              >
+                <ion-icon name="close-circle"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <!-- Basic Car Information -->
+      <h3>Basic Information</h3>
+      <ion-item>
+        <ion-label position="floating">Make & Model*</ion-label>
+        <ion-input formControlName="make_model" required></ion-input>
       </ion-item>
 
       <ion-item>
-        <ion-label position="floating">Car Type</ion-label>
-        <ion-input formControlName="car_type"></ion-input>
+        <ion-label position="floating">Car Type*</ion-label>
+        <ion-select formControlName="car_type" interface="popover">
+          <ion-select-option value="Sedan">Sedan</ion-select-option>
+          <ion-select-option value="SUV">SUV</ion-select-option>
+          <ion-select-option value="Hatchback">Hatchback</ion-select-option>
+          <ion-select-option value="Coupe">Coupe</ion-select-option>
+          <ion-select-option value="Convertible">Convertible</ion-select-option>
+          <ion-select-option value="Truck">Truck</ion-select-option>
+          <ion-select-option value="Van">Van</ion-select-option>
+        </ion-select>
       </ion-item>
 
       <ion-item>
-        <ion-label position="floating">Year of Manufacture</ion-label>
-        <ion-input type="number" formControlName="year"></ion-input>
+        <ion-label position="floating">Year*</ion-label>
+        <ion-input type="number" formControlName="year" min="1900" max="2023" required></ion-input>
       </ion-item>
 
       <ion-item>
@@ -28,74 +80,86 @@
         <ion-input formControlName="color"></ion-input>
       </ion-item>
 
+      <!-- Car Specifications -->
+      <h3>Specifications</h3>
       <ion-item>
         <ion-label position="floating">Transmission</ion-label>
-        <ion-input formControlName="transmission"></ion-input>
+        <ion-select formControlName="transmission" interface="popover">
+          <ion-select-option value="Automatic">Automatic</ion-select-option>
+          <ion-select-option value="Manual">Manual</ion-select-option>
+        </ion-select>
       </ion-item>
 
       <ion-item>
-        <ion-label position="floating">Seats</ion-label>
-        <ion-input type="number" formControlName="seats"></ion-input>
+        <ion-label position="floating">Seats*</ion-label>
+        <ion-input type="number" formControlName="seats" min="1" required></ion-input>
       </ion-item>
 
       <ion-item>
         <ion-label position="floating">Fuel Type</ion-label>
-        <ion-input formControlName="fuel_type"></ion-input>
+        <ion-select formControlName="fuel_type" interface="popover">
+          <ion-select-option value="Petrol">Petrol</ion-select-option>
+          <ion-select-option value="Diesel">Diesel</ion-select-option>
+          <ion-select-option value="Electric">Electric</ion-select-option>
+          <ion-select-option value="Hybrid">Hybrid</ion-select-option>
+        </ion-select>
       </ion-item>
 
       <ion-item>
-        <ion-label position="floating">Engine</ion-label>
+        <ion-label position="floating">Engine (cc)</ion-label>
         <ion-input formControlName="engine"></ion-input>
       </ion-item>
 
-      <h3>Pricing & Rental Conditions</h3>
-
+      <!-- Features -->
       <ion-item>
-        <ion-label position="floating">Price per Hour ($)</ion-label>
-        <ion-input type="number" formControlName="price_per_hour"></ion-input>
+        <ion-label>Features</ion-label>
+        <ion-select multiple formControlName="features" interface="popover">
+          <ion-select-option value="GPS">GPS</ion-select-option>
+          <ion-select-option value="Bluetooth">Bluetooth</ion-select-option>
+          <ion-select-option value="Sunroof">Sunroof</ion-select-option>
+          <ion-select-option value="Backup Camera">Backup Camera</ion-select-option>
+          <ion-select-option value="Heated Seats">Heated Seats</ion-select-option>
+          <ion-select-option value="Apple CarPlay">Apple CarPlay</ion-select-option>
+          <ion-select-option value="Android Auto">Android Auto</ion-select-option>
+        </ion-select>
       </ion-item>
 
+      <!-- Pricing -->
+      <h3>Pricing</h3>
       <ion-item>
-        <ion-label position="floating">Price per Day ($)</ion-label>
-        <ion-input type="number" formControlName="price_per_day"></ion-input>
+        <ion-label position="floating">Price per Day ($)*</ion-label>
+        <ion-input type="number" formControlName="price_per_day" min="0" required></ion-input>
       </ion-item>
 
-      <h3>Additional Charges</h3>
-
+      <!-- Rental Conditions -->
+      <h3>Rental Conditions</h3>
       <ion-item>
-        <ion-label position="floating">Fuel Charge ($)</ion-label>
-        <ion-input type="number" formControlName="fuel_charge"></ion-input>
+        <ion-label position="floating">Mileage Limit (km/day)</ion-label>
+        <ion-input type="number" formControlName="mileage_limit" min="0"></ion-input>
       </ion-item>
 
+      <!-- Pickup Location -->
+      <h3>Location</h3>
       <ion-item>
-        <ion-label position="floating">Mileage Limit (km)</ion-label>
-        <ion-input type="number" formControlName="mileage_limit"></ion-input>
+        <ion-label position="floating">Pickup Location*</ion-label>
+        <ion-input 
+          #pickupInput 
+          formControlName="pickup_location" 
+          required
+        ></ion-input>
       </ion-item>
+      <div id="map" style="height: 200px; margin: 16px 0; border: 1px solid #ddd;"></div>
 
-      <ion-item>
-        <ion-label position="floating">Insurance Fee ($)</ion-label>
-        <ion-input type="number" formControlName="insurance_fee"></ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-label position="floating">Deposit ($)</ion-label>
-        <ion-input type="number" formControlName="deposit"></ion-input>
-      </ion-item>
-
-      <h3>Pickup & Availability</h3>
-      <ion-item>
-        <ion-label>Pickup Location</ion-label>
-        <ion-input id="pickupInput" #pickupInput type="text" formControlName="pickup_location" placeholder="Enter Pickup Location"></ion-input>
-      </ion-item>      
-      <!-- Map Display -->
-      <div id="map"></div>
-
-      <ion-item>
-        <ion-label position="floating">Car Image URL</ion-label>
-        <ion-input formControlName="image_url"></ion-input>
-      </ion-item>
-
-      <ion-button expand="full" type="submit" [disabled]="!carForm.valid">Register</ion-button>
+      <!-- Submit Button -->
+      <ion-button 
+        expand="block" 
+        type="submit" 
+        [disabled]="!carForm.valid || isLoading"
+        class="submit-btn"
+      >
+        <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+        {{ isLoading ? 'Registering...' : 'Register Car' }}
+      </ion-button>
     </form>
   </div>
 </ion-content>
