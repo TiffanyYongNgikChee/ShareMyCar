@@ -5,6 +5,8 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../main'; // Adjust based on your structure
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { CarService } from '../services/car.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-home',
@@ -15,27 +17,27 @@ import { Router } from '@angular/router';
 })
 export class HomePage implements OnInit {
   cars: any[] = []; // Store fetched car data
+  isLoading = true;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router, private carService: CarService,
+    private userService: UserService) {}
 
   async ngOnInit() {
     await this.loadCars();
   }
 
   async loadCars() {
-    try {
-      const carsCollection = collection(db, 'cars'); // Reference to Firestore collection
-      const snapshot = await getDocs(carsCollection);
-
-      this.cars = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
+    this.carService.getAvailableCars().subscribe(async (cars) => {
+      // Fetch owner names for each car
+      this.cars = await Promise.all(cars.map(async car => {
+        const owner = await this.userService.getUser(car.ownerId);
+        return {
+          ...car,
+          ownerName: owner?.username || 'Unknown'
+        };
       }));
-
-      console.log('Fetched Cars:', this.cars);
-    } catch (error) {
-      console.error('Error fetching cars:', error);
-    }
+      this.isLoading = false;
+    });
   }
   async goToProfile() {
     const user = await this.authService.getCurrentUser();
@@ -44,5 +46,9 @@ export class HomePage implements OnInit {
     } else {
       this.router.navigate(['/login']);
     }
+  }
+
+  async goToDetails(){
+    this.router.navigate(['/details']);
   }
 }
