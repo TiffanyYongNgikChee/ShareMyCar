@@ -7,11 +7,12 @@ import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { CarService } from '../services/car.service';
 import { UserService } from '../services/user.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, IonicModule],
+  imports: [CommonModule, IonicModule,RouterModule],
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss']
 })

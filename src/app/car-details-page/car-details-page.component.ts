@@ -5,13 +5,18 @@ import { ActivatedRoute } from '@angular/router';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { UserService } from '../services/user.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { register } from 'swiper/element/bundle';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
+// Register Swiper custom elements
+register();
 @Component({
   selector: 'app-car-details-page',
   standalone: true,
   imports: [CommonModule, IonicModule, ReactiveFormsModule],
   templateUrl: './car-details-page.component.html',
   styleUrls: ['./car-details-page.component.scss'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class CarDetailsPageComponent  implements OnInit {
   carId: string = '';

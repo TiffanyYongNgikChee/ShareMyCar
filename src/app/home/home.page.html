@@ -21,7 +21,7 @@
 
   <!-- Car cards -->
   <div class="car-grid">
-    <ion-card *ngFor="let car of cars" class="car-card">
+    <ion-card *ngFor="let car of cars" class="car-card" [routerLink]="['/car', car.id]">
       <img [src]="car.images?.[0] || 'assets/default-car.jpg'" alt="{{car.make_model}}">
       <ion-card-header>
         <ion-card-title>{{car.make_model}}</ion-card-title>

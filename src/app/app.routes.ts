@@ -38,4 +38,8 @@ export const routes: Routes = [
     path: 'rider-car-management',
     loadComponent: () => import('./rider-car-management/rider-car-management.component').then((m) => m.RiderCarManagementComponent),
   },
+  {
+    path: 'car/:id',
+    loadComponent: () => import('./car-details-page/car-details-page.component').then((m) => m.CarDetailsPageComponent),
+  },
 ];
