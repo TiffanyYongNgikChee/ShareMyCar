@@ -56,3 +56,12 @@
       --border-color: var(--ion-color-primary);
     }
   }
+
+ion-button[logout-button] {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  
+  ion-icon {
+    font-size: 1.5em;
+  }
+}

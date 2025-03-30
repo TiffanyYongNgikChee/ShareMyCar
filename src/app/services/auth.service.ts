@@ -3,6 +3,7 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVe
 import { collection, doc, setDoc,getDoc } from 'firebase/firestore';
 import { db } from '../../main';  // Import Firestore instance
 import { Router } from '@angular/router';
+import { Auth} from '@angular/fire/auth';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 type UserRole = 'rider' | 'owner';
 
@@ -69,7 +70,7 @@ export class AuthService {
   }
 
   async logout() {
-    await this.auth.signOut();
+    await signOut(this.auth);
     this.currentUserRole = null;
     this.router.navigate(['/login']);
   }

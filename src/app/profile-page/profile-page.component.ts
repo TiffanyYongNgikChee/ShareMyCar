@@ -37,7 +37,10 @@ export class ProfilePageComponent implements OnInit{
       addIcons({ camera, cloudUpload, save, carSport });
     }
 
-
+    logout() {
+      this.authService.logout();
+    }
+    
     async ngOnInit() {
       this.isLoading = true;
       try {
