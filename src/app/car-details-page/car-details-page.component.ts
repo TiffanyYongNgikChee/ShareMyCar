@@ -18,7 +18,7 @@ register();
   styleUrls: ['./car-details-page.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class CarDetailsPageComponent  implements OnInit {
+export class CarDetailsPageComponent  implements OnInit{
   carId: string = '';
   car: any = null;
   owner: any = null;

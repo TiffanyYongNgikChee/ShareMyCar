@@ -8,6 +8,11 @@ import { Router } from '@angular/router';
 import { CarService } from '../services/car.service';
 import { UserService } from '../services/user.service';
 import { RouterModule } from '@angular/router';
+import {
+  personCircleOutline,
+  personCircle
+} from 'ionicons/icons';
+import { addIcons } from 'ionicons';
 
 @Component({
   selector: 'app-home',
@@ -21,7 +26,12 @@ export class HomePage implements OnInit {
   isLoading = true;
 
   constructor(private authService: AuthService, private router: Router, private carService: CarService,
-    private userService: UserService) {}
+    private userService: UserService) {
+      addIcons({
+            personCircleOutline,
+            personCircle
+      });
+    }
 
   async ngOnInit() {
     await this.loadCars();

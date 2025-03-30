@@ -43,3 +43,34 @@
   ion-item-option {
     padding: 0 10px;
   }
+
+  /* For the empty state */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  
+  .empty-icon {
+    font-size: 64px;
+    color: var(--ion-color-medium);
+  }
+  
+  h2 {
+    margin-top: 16px;
+    font-weight: bold;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    margin-bottom: 24px;
+  }
+  
+  .register-button {
+    --padding-start: 24px;
+    --padding-end: 24px;
+  }
+}
+
+/* For the floating button */
+ion-fab-button {
+  --box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}

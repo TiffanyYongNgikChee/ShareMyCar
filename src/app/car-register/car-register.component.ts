@@ -7,6 +7,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Router } from '@angular/router';
 
+
 @Component({
   selector: 'app-car-register',
   standalone: true,

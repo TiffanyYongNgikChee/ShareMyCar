@@ -15,6 +15,20 @@ import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
+import { 
+  add,
+  addOutline,        // For add/register buttons
+  carSportOutline,   // For car-related elements
+  eyeOutline,        // For available toggle
+  eyeOffOutline,     // For not-available toggle
+  createOutline,     // For edit
+  trashOutline,      // For delete
+  listOutline,       // For rental requests
+  arrowBackOutline,  // For back button
+  personOutline,      // For owner info
+  image
+} from 'ionicons/icons';
+import { addIcons } from 'ionicons';
 
 interface Car {
   id: string;
@@ -44,7 +58,20 @@ export class OwnerCarManagementComponent  implements OnInit {
     private router: Router,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController
-  ) {}
+  ) {
+    addIcons({
+      addOutline,
+      carSportOutline,
+      eyeOutline,
+      eyeOffOutline,
+      createOutline,
+      trashOutline,
+      listOutline,
+      arrowBackOutline,
+      add,
+      image
+    });
+  }
 
   async ngOnInit() {
     this.loadCars();
