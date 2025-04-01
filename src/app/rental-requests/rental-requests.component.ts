@@ -4,6 +4,10 @@ import { ModalController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { IonicModule } from '@ionic/angular';
+import { 
+  checkmarkCircleOutline
+} from 'ionicons/icons';
+import { addIcons } from 'ionicons';
 
 @Component({
   selector: 'app-rental-requests',
@@ -19,7 +23,9 @@ export class RentalRequestsComponent{
   constructor(
     private firestore: Firestore,
     private modalCtrl: ModalController
-  ) {}
+  ) {
+    addIcons({ checkmarkCircleOutline });
+  }
 
   async loadRequests() {
     try {

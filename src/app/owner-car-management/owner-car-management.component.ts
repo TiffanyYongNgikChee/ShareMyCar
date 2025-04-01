@@ -13,11 +13,11 @@ import {
 import { AuthService } from '../services/auth.service';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { UserService } from '../services/user.service';
-import { IonRouterOutlet, ModalController } from '@ionic/angular';
+import { RentalRequestsComponent } from '../rental-requests/rental-requests.component';
 import { 
   add,
   addOutline,        // For add/register buttons
@@ -29,7 +29,8 @@ import {
   listOutline,       // For rental requests
   arrowBackOutline,  // For back button
   personOutline,      // For owner info
-  image
+  image,
+  notificationsOutline
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 
@@ -41,6 +42,16 @@ interface Car {
   price_per_day: number;
   isAvailable: boolean;
   images: string[];
+  ownerId: string;
+}
+interface RentalRequest {
+  id: string;
+  carId: string;
+  renterId: string;
+  status: 'pending' | 'approved' | 'rejected';
+  pickupDate: string;
+  dropoffDate: string;
+  totalPrice: number;
   // Add other fields as needed
 }
 
@@ -54,13 +65,16 @@ interface Car {
 export class OwnerCarManagementComponent  implements OnInit {
   cars: Car[] = [];
   isLoading = true;
+  rentalRequests: RentalRequest[] = [];
+  carRequestCounts: {[carId: string]: number} = {};
 
   constructor(
     private firestore: Firestore,
     private authService: AuthService,
     private router: Router,
     private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private modalCtrl: ModalController
   ) {
     addIcons({
       addOutline,
@@ -71,13 +85,16 @@ export class OwnerCarManagementComponent  implements OnInit {
       trashOutline,
       listOutline,
       arrowBackOutline,
-      add,
-      image
+      personOutline,
+      image,
+      notificationsOutline
     });
   }
 
   async ngOnInit() {
-    this.loadCars();
+    await this.loadCars();
+    this.setupRequestListener();
+    
   }
 
   async loadCars() {
@@ -89,21 +106,57 @@ export class OwnerCarManagementComponent  implements OnInit {
     }
   
     const carsRef = collection(this.firestore, 'cars');
-    const q = query(
-      carsRef, 
-      where('ownerId', '==', user.uid)  // Now properly typed
-    );
+    const q = query(carsRef, where('ownerId', '==', user.uid));
     
-    collectionData(q, { idField: 'id' }).subscribe({
-      next: (cars: any[]) => {
-        this.cars = cars;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading cars:', err);
-        this.isLoading = false;
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      this.cars = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as Car));
+      this.isLoading = false;
+      this.updateRequestCounts();
+    });
+  }
+
+  setupRequestListener() {
+    this.authService.getCurrentUser().then(user => {
+      if (!user) return;
+
+      const requestsRef = collection(this.firestore, 'rentalRequests');
+      const q = query(
+        requestsRef,
+        where('ownerId', '==', user.uid),
+        where('status', '==', 'pending')
+      );
+
+      onSnapshot(q, (snapshot) => {
+        this.rentalRequests = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        } as RentalRequest));
+        this.updateRequestCounts();
+      });
+    });
+  }
+
+  updateRequestCounts() {
+    this.carRequestCounts = {};
+    this.rentalRequests.forEach(request => {
+      if (!this.carRequestCounts[request.carId]) {
+        this.carRequestCounts[request.carId] = 0;
+      }
+      this.carRequestCounts[request.carId]++;
+    });
+  }
+
+  async viewRentalRequests(carId: string) {
+    const modal = await this.modalCtrl.create({
+      component: RentalRequestsComponent,
+      componentProps: {
+        carId: carId
       }
     });
+    await modal.present();
   }
 
   async toggleAvailability(car: Car) {
@@ -173,10 +226,6 @@ export class OwnerCarManagementComponent  implements OnInit {
 
   editCar(carId: string) {
     this.router.navigate(['/edit-car', carId]);
-  }
-
-  viewRentalRequests(carId: string) {
-    this.router.navigate(['/details', carId]);
   }
 
   registerNewCar() {
