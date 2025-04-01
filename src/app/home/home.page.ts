@@ -17,7 +17,9 @@ import {
   locationOutline,
   peopleOutline,
   speedometerOutline,
-  flashOutline
+  flashOutline,
+  filter,
+  fileTray
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 
@@ -52,7 +54,8 @@ export class HomePage implements OnInit {
           locationOutline,
           peopleOutline,
           speedometerOutline,
-          flashOutline
+          flashOutline,
+          filter
       });
     }
 
