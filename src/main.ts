@@ -10,6 +10,7 @@ import { getAuth } from 'firebase/auth';
 import { getStorage} from 'firebase/storage';
 import { provideFirebaseApp} from '@angular/fire/app';
 import { provideFirestore} from '@angular/fire/firestore';
+import { provideAuth} from '@angular/fire/auth';
 
 // Initialize Firebase directly
 const firebaseConfig = {
@@ -22,6 +23,7 @@ const firebaseConfig = {
   measurementId: "G-4LKVF26SBL"
 };
 
+
 // Add this export to your existing main.ts
 export const app = initializeApp(firebaseConfig); // Change from 'const' to 'export const'
 export const db = getFirestore(app);
@@ -32,6 +34,7 @@ bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
+    provideAuth(() => getAuth()),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideFirestore(() => getFirestore()),

@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
-import { User } from '@angular/fire/auth'; // Optional - for typing
+import { Auth, authState, User } from '@angular/fire/auth';
+import { Observable, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 interface UserProfile {
   uid: string;
@@ -15,7 +17,27 @@ interface UserProfile {
   providedIn: 'root'
 })
 export class UserService {
-  constructor(private firestore: Firestore) {}
+  currentUser$: Observable<User | null>;
+  currentUserProfile$: Observable<UserProfile | null>;
+
+  constructor(
+    private firestore: Firestore,
+    private auth: Auth
+  ) {
+    // Initialize current user observable
+    this.currentUser$ = authState(this.auth);
+
+    // Initialize current user profile observable
+    this.currentUserProfile$ = this.currentUser$.pipe(
+      switchMap(user => {
+        if (user) {
+          return this.getUser(user.uid);
+        } else {
+          return of(null);
+        }
+      })
+    );
+  }
 
   /**
    * Get user profile data from Firestore
@@ -38,6 +60,14 @@ export class UserService {
       console.error('Error fetching user:', error);
       return null;
     }
+  }
+
+  /**
+   * Get current user ID synchronously
+   * @returns Current user ID or null if not logged in
+   */
+  get currentUserId(): string | null {
+    return this.auth.currentUser?.uid || null;
   }
 
   /**

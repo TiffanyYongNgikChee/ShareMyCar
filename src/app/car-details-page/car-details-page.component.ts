@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, collection, addDoc } from '@angular/fire/firestore';
 import { UserService } from '../services/user.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { register } from 'swiper/element/bundle';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { addIcons } from 'ionicons';
 import {colorFilterOutline,flashOutline, speedometerOutline,cogOutline} from 'ionicons/icons';
+import { ToastController } from '@ionic/angular';
 
 // Register Swiper custom elements
 register();
@@ -26,10 +27,12 @@ export class CarDetailsPageComponent  implements OnInit{
   owner: any = null;
   isLoading = true;
   rentalForm: FormGroup;
+  isSubmitting = false;
 
   constructor(private route: ActivatedRoute,
     private firestore: Firestore,
     private userService: UserService,
+    private toastController: ToastController,
     private fb: FormBuilder) {
       this.rentalForm = this.fb.group({
         pickupDate: ['', Validators.required],
@@ -76,19 +79,78 @@ export class CarDetailsPageComponent  implements OnInit{
         return 0;
       }
       
-      // This would be calculation logic
-      const days = 1; // Replace with actual day calculation
-      return days * this.car.price_per_day;
+      // Calculate the difference in days
+      const pickupDate = new Date(this.rentalForm.value.pickupDate);
+      const dropoffDate = new Date(this.rentalForm.value.dropoffDate);
+      const diffTime = Math.abs(dropoffDate.getTime() - pickupDate.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+      
+      return diffDays * this.car.price_per_day;
     }
   
-    onSubmit() {
-      if (this.rentalForm.valid) {
-        console.log('Rental request:', {
+    async onSubmit() {
+      if (this.rentalForm.invalid || this.isSubmitting) return;
+      
+      this.isSubmitting = true;
+      
+      try {
+        const requestData = {
           carId: this.carId,
+          carName: this.car.make + ' ' + this.car.model,
+          renterId: this.userService.currentUserId,
+          ownerId: this.car.ownerId,
+          status: 'pending',
+          createdAt: new Date().toISOString(),
           ...this.rentalForm.value,
           totalPrice: this.calculateTotal()
-        });
-        // Add submission logic here
+        };
+  
+        // Add the request to Firestore
+        const requestsRef = collection(this.firestore, 'rentalRequests');
+        await addDoc(requestsRef, requestData);
+  
+        // Show success message
+        await this.showSuccessToast();
+        
+        // Reset form after successful submission
+        this.rentalForm.reset();
+      } catch (error) {
+        console.error('Error submitting request:', error);
+        await this.showErrorToast();
+      } finally {
+        this.isSubmitting = false;
       }
+    }
+  
+    private async showSuccessToast() {
+      const toast = await this.toastController.create({
+        message: 'Request sent to owner!',
+        duration: 3000,
+        position: 'top',
+        color: 'success',
+        buttons: [
+          {
+            text: 'OK',
+            role: 'cancel'
+          }
+        ]
+      });
+      await toast.present();
+    }
+  
+    private async showErrorToast() {
+      const toast = await this.toastController.create({
+        message: 'Failed to send request. Please try again.',
+        duration: 3000,
+        position: 'top',
+        color: 'danger',
+        buttons: [
+          {
+            text: 'OK',
+            role: 'cancel'
+          }
+        ]
+      });
+      await toast.present();
     }
   }
