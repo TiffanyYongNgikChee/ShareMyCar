@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Rental Requests</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngIf="requests.length > 0">
+    <ion-item *ngFor="let request of requests">
+      <ion-label>
+        <h2>{{ request.renterName || 'User' }} wants to rent</h2>
+        <p>From: {{ request.pickupDate | date }} at {{ request.pickupTime }}</p>
+        <p>To: {{ request.dropoffDate | date }} at {{ request.dropoffTime }}</p>
+        <p>Total: ${{ request.totalPrice }}</p>
+        <p *ngIf="request.specialRequests">Notes: {{ request.specialRequests }}</p>
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-button color="success" (click)="respondToRequest(request.id, 'approved')">
+          Approve
+        </ion-button>
+        <ion-button color="danger" (click)="respondToRequest(request.id, 'rejected')">
+          Reject
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="requests.length === 0" class="empty-state">
+    <ion-icon name="checkmark-circle-outline"></ion-icon>
+    <p>No pending requests for this car</p>
+  </div>
+</ion-content>

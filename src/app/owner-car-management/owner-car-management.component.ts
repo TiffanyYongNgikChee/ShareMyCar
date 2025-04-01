@@ -6,6 +6,7 @@ import {
   doc, 
   deleteDoc, 
   updateDoc,
+  onSnapshot,
   query,  // Add this import
   where    // Add this import
 } from '@angular/fire/firestore';
@@ -15,6 +16,8 @@ import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
+import { UserService } from '../services/user.service';
+import { IonRouterOutlet, ModalController } from '@ionic/angular';
 import { 
   add,
   addOutline,        // For add/register buttons

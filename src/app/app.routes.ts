@@ -42,4 +42,8 @@ export const routes: Routes = [
     path: 'car/:id',
     loadComponent: () => import('./car-details-page/car-details-page.component').then((m) => m.CarDetailsPageComponent),
   },
+  {
+    path: 'request',
+    loadComponent: () => import('./rental-requests/rental-requests.component').then((m) => m.RentalRequestsComponent),
+  },
 ];
