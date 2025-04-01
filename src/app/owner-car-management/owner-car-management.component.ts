@@ -173,7 +173,7 @@ export class OwnerCarManagementComponent  implements OnInit {
   }
 
   viewRentalRequests(carId: string) {
-    this.router.navigate(['/rental-requests', carId]);
+    this.router.navigate(['/details', carId]);
   }
 
   registerNewCar() {

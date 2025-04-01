@@ -7,6 +7,8 @@ import { UserService } from '../services/user.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { register } from 'swiper/element/bundle';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { addIcons } from 'ionicons';
+import {colorFilterOutline,flashOutline, speedometerOutline,cogOutline} from 'ionicons/icons';
 
 // Register Swiper custom elements
 register();
@@ -36,6 +38,14 @@ export class CarDetailsPageComponent  implements OnInit{
         dropoffTime: ['', Validators.required],
         specialRequests: ['']
       });
+
+      addIcons({
+        flashOutline,
+        colorFilterOutline,
+        speedometerOutline,
+        cogOutline
+        });
+
      }
      async ngOnInit() {
       this.carId = this.route.snapshot.paramMap.get('id')!;
