@@ -7,6 +7,18 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+
+  <!-- Search Bar -->
+  <ion-toolbar>
+    <ion-searchbar 
+      [(ngModel)]="searchQuery" 
+      (ionChange)="applyFilters()"
+      placeholder="Search by make, model or location"
+      animated
+      debounce="300"
+    ></ion-searchbar>
+  </ion-toolbar>
+  
 </ion-header>
 
 <ion-content>
