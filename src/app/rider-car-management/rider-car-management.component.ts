@@ -9,7 +9,7 @@ import { IonicModule } from '@ionic/angular';
 interface RentalRequest {
   id: string;
   carId: string;
-  carName: string;
+  carName?: string;
   ownerId: string;
   status: 'pending' | 'approved' | 'rejected';
   pickupDate: string;

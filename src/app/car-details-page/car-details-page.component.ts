@@ -96,7 +96,7 @@ export class CarDetailsPageComponent  implements OnInit{
       try {
         const requestData = {
           carId: this.carId,
-          carName: this.car.make + ' ' + this.car.model,
+          carName: this.car.make_model,
           renterId: this.userService.currentUserId,
           ownerId: this.car.ownerId,
           status: 'pending',
