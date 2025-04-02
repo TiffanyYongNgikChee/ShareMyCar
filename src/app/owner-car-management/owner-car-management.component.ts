@@ -48,6 +48,7 @@ interface RentalRequest {
   id: string;
   carId: string;
   renterId: string;
+  renterName: string;
   status: 'pending' | 'approved' | 'rejected';
   pickupDate: string;
   dropoffDate: string;
@@ -149,11 +150,20 @@ export class OwnerCarManagementComponent  implements OnInit {
     });
   }
 
+  // Add this method to get requests for a specific car
+  getRequestsForCar(carId: string): RentalRequest[] {
+    return this.rentalRequests.filter(request => request.carId === carId);
+  }
+
+  // Update the viewRentalRequests method
   async viewRentalRequests(carId: string) {
+    const carRequests = this.getRequestsForCar(carId);
+    
     const modal = await this.modalCtrl.create({
       component: RentalRequestsComponent,
       componentProps: {
-        carId: carId
+        carId: carId,
+        requests: carRequests // Pass the pre-filtered requests
       }
     });
     await modal.present();

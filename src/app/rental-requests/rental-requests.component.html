@@ -11,11 +11,9 @@
   <ion-list *ngIf="requests.length > 0">
     <ion-item *ngFor="let request of requests">
       <ion-label>
-        <h2>{{ request.renterName || 'User' }} wants to rent</h2>
-        <p>From: {{ request.pickupDate | date }} at {{ request.pickupTime }}</p>
-        <p>To: {{ request.dropoffDate | date }} at {{ request.dropoffTime }}</p>
-        <p>Total: ${{ request.totalPrice }}</p>
-        <p *ngIf="request.specialRequests">Notes: {{ request.specialRequests }}</p>
+        <h3>Request from User {{request.renterId?.slice(0, 8)}}</h3>
+        <p>Dates: {{request.pickupDate | date}} to {{request.dropoffDate | date}}</p>
+        <p>Total: ${{request.totalPrice}}</p>
       </ion-label>
       <ion-buttons slot="end">
         <ion-button color="success" (click)="respondToRequest(request.id, 'approved')">
@@ -29,7 +27,7 @@
   </ion-list>
 
   <div *ngIf="requests.length === 0" class="empty-state">
-    <ion-icon name="checkmark-circle-outline"></ion-icon>
+    <ion-icon name="checkmark-circle-outline" size="large"></ion-icon>
     <p>No pending requests for this car</p>
   </div>
 </ion-content>

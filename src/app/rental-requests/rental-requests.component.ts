@@ -17,13 +17,13 @@ import { addIcons } from 'ionicons';
 })
 export class RentalRequestsComponent{
   @Input() carId: string = '';
-  requests: any[] = [];
+  @Input() requests!: any[];
   isLoading = true;
 
   constructor(
     private firestore: Firestore,
     private modalCtrl: ModalController
-  ) {
+  ) { 
     addIcons({ checkmarkCircleOutline });
   }
 
@@ -51,10 +51,15 @@ export class RentalRequestsComponent{
 
 
 
-  async respondToRequest(requestId: string, status: string) {
-    const requestRef = doc(this.firestore, `rentalRequests/${requestId}`);
-    await updateDoc(requestRef, { status });
-    // Optionally notify the renter here
+  async respondToRequest(requestId: string, status: 'approved'|'rejected') {
+    try {
+      const requestRef = doc(this.firestore, `rentalRequests/${requestId}`);
+      await updateDoc(requestRef, { status });
+      // Remove the request from the local array
+      this.requests = this.requests.filter(req => req.id !== requestId);
+    } catch (error) {
+      console.error('Error updating request:', error);
+    }
   }
 
   dismiss() {
