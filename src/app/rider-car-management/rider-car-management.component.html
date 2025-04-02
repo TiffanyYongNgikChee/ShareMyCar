@@ -24,7 +24,12 @@
   <ion-loading [isOpen]="isLoading" message="Loading requests..."></ion-loading>
 
   <ion-list *ngIf="!isLoading">
-    <ion-item *ngFor="let request of getFilteredRequests()">
+    <ion-item 
+      *ngFor="let request of getFilteredRequests()" 
+      button 
+      detail 
+      (click)="viewCarDetails(request.carId)"
+    >
       <ion-label>
         <h2>{{ request.carName }}</h2>
         <p>Requested: {{ request.createdAt | date:'medium' }}</p>

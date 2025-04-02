@@ -5,6 +5,11 @@ import { LoadingController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { IonicModule } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { 
+  carOutline
+} from 'ionicons/icons';
+import { addIcons } from 'ionicons';
 
 interface RentalRequest {
   id: string;
@@ -30,13 +35,18 @@ export class RiderCarManagementComponent implements OnInit {
   segmentValue = 'all';
 
   constructor(
+    private router: Router,
     private firestore: Firestore,
     private authService: AuthService,
     private loadingCtrl: LoadingController
-  ) {}
+  ) { addIcons({ carOutline });}
 
   async ngOnInit() {
     await this.loadRequests();
+  }
+
+  viewCarDetails(carId: string) {
+    this.router.navigate(['/car', carId]);
   }
 
   async loadRequests() {

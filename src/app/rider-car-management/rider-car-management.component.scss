@@ -16,9 +16,21 @@
     --padding-end: 16px;
     --inner-padding-end: 0;
     margin-bottom: 8px;
+    
+    // Make the entire item clickable
+    cursor: pointer;
+    
+    // Visual feedback on hover
+    transition: background-color 0.2s ease;
+    &:hover {
+      background-color: var(--ion-color-light);
+    }
   }
   
+  // Make badges less prominent so they don't distract from click action
   ion-badge {
-    font-weight: 500;
-    padding: 8px 12px;
+    font-weight: normal;
+    padding: 6px 10px;
+    margin-left: 8px;
   }
+  
