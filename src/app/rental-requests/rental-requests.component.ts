@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input,OnInit } from '@angular/core';
 import { Firestore, collection, query, where, onSnapshot, doc, updateDoc } from '@angular/fire/firestore';
 import { ModalController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
@@ -15,9 +15,10 @@ import { addIcons } from 'ionicons';
   templateUrl: './rental-requests.component.html',
   styleUrls: ['./rental-requests.component.scss'],
 })
-export class RentalRequestsComponent{
+export class RentalRequestsComponent implements OnInit{
   @Input() carId: string = '';
   @Input() requests!: any[];
+  statusFilter: 'all' | 'pending' | 'approved' | 'rejected' = 'all';
   isLoading = true;
 
   constructor(
@@ -27,13 +28,17 @@ export class RentalRequestsComponent{
     addIcons({ checkmarkCircleOutline });
   }
 
+  async ngOnInit() {
+    await this.loadRequests();
+  }
+
   async loadRequests() {
     try {
       const requestsRef = collection(this.firestore, 'rentalRequests');
       const q = query(
         requestsRef,
         where('carId', '==', this.carId),
-        where('status', '==', 'pending')
+        
       );
 
       onSnapshot(q, (snapshot) => {
@@ -49,7 +54,15 @@ export class RentalRequestsComponent{
     }
   }
 
+  get filteredRequests() {
+    if (this.statusFilter === 'all') return this.requests;
+    return this.requests.filter(req => req.status === this.statusFilter);
+  }
 
+  async updateRequestStatus(requestId: string, status: 'approved' | 'rejected') {
+    const requestRef = doc(this.firestore, `rentalRequests/${requestId}`);
+    await updateDoc(requestRef, { status });
+  }
 
   async respondToRequest(requestId: string, status: 'approved'|'rejected') {
     try {
@@ -59,6 +72,15 @@ export class RentalRequestsComponent{
       this.requests = this.requests.filter(req => req.id !== requestId);
     } catch (error) {
       console.error('Error updating request:', error);
+    }
+  }
+
+  getStatusColor(status: string): string {
+    switch(status) {
+      case 'approved': return 'success';
+      case 'rejected': return 'danger';
+      case 'pending': return 'warning';
+      default: return 'medium';
     }
   }
 

@@ -5,29 +5,52 @@
       <ion-button (click)="dismiss()">Close</ion-button>
     </ion-buttons>
   </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="statusFilter">
+      <ion-segment-button value="all">
+        <ion-label>All</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="pending">
+        <ion-label>Pending</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="approved">
+        <ion-label>Approved</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="rejected">
+        <ion-label>Declined</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list *ngIf="requests.length > 0">
-    <ion-item *ngFor="let request of requests">
+  <ion-loading [isOpen]="isLoading"></ion-loading>
+
+  <ion-list *ngIf="!isLoading">
+    <ion-item *ngFor="let request of filteredRequests">
       <ion-label>
-        <h3>Request from User {{request.renterId?.slice(0, 8)}}</h3>
-        <p>Dates: {{request.pickupDate | date}} to {{request.dropoffDate | date}}</p>
-        <p>Total: ${{request.totalPrice}}</p>
+        <h2>{{ request.renterName || 'User' }}</h2>
+        <p>Dates: {{ request.pickupDate | date }} - {{ request.dropoffDate | date }}</p>
+        <p>Status: 
+          <ion-badge [color]="getStatusColor(request.status)">
+            {{ request.status | uppercase }}
+          </ion-badge>
+        </p>
       </ion-label>
-      <ion-buttons slot="end">
-        <ion-button color="success" (click)="respondToRequest(request.id, 'approved')">
+      
+      <ion-buttons slot="end" *ngIf="request.status === 'pending'">
+        <ion-button color="success" (click)="updateRequestStatus(request.id, 'approved')">
           Approve
         </ion-button>
-        <ion-button color="danger" (click)="respondToRequest(request.id, 'rejected')">
-          Reject
+        <ion-button color="danger" (click)="updateRequestStatus(request.id, 'rejected')">
+          Decline
         </ion-button>
       </ion-buttons>
     </ion-item>
-  </ion-list>
 
-  <div *ngIf="requests.length === 0" class="empty-state">
-    <ion-icon name="checkmark-circle-outline" size="large"></ion-icon>
-    <p>No pending requests for this car</p>
-  </div>
+    <div *ngIf="filteredRequests.length === 0" class="empty-state">
+      <ion-icon name="list-outline"></ion-icon>
+      <p>No {{statusFilter === 'all' ? '' : statusFilter}} requests</p>
+    </div>
+  </ion-list>
 </ion-content>
