@@ -1,3 +1,44 @@
-<p>
-  rider-car-management works!
-</p>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>My Rental Requests</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="segmentValue" (ionChange)="getFilteredRequests()">
+      <ion-segment-button value="all">
+        <ion-label>All</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="pending">
+        <ion-label>Pending</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="approved">
+        <ion-label>Approved</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="rejected">
+        <ion-label>Declined</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-loading [isOpen]="isLoading" message="Loading requests..."></ion-loading>
+
+  <ion-list *ngIf="!isLoading">
+    <ion-item *ngFor="let request of getFilteredRequests()">
+      <ion-label>
+        <h2>{{ request.carName }}</h2>
+        <p>Requested: {{ request.createdAt | date:'medium' }}</p>
+        <p>Dates: {{ request.pickupDate | date }} - {{ request.dropoffDate | date }}</p>
+        <p>Total: ${{ request.totalPrice }}</p>
+      </ion-label>
+      <ion-badge slot="end" [color]="getStatusColor(request.status)">
+        {{ request.status | uppercase }}
+      </ion-badge>
+    </ion-item>
+
+    <div *ngIf="getFilteredRequests().length === 0" class="empty-state">
+      <ion-icon name="car-outline" size="large"></ion-icon>
+      <p>No {{ segmentValue === 'all' ? '' : segmentValue }} requests found</p>
+    </div>
+  </ion-list>
+</ion-content>

@@ -1,0 +1,24 @@
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    ion-icon {
+      font-size: 64px;
+      color: var(--ion-color-medium);
+    }
+    p {
+      color: var(--ion-color-medium-shade);
+      margin-top: 16px;
+    }
+  }
+  
+  ion-item {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --inner-padding-end: 0;
+    margin-bottom: 8px;
+  }
+  
+  ion-badge {
+    font-weight: 500;
+    padding: 8px 12px;
+  }
