@@ -1,67 +1,153 @@
 .profile-picture-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 20px 0;
-    
-    .avatar-upload {
-      position: relative;
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      overflow: hidden;
-      cursor: pointer;
-      
-      .profile-avatar {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      
-      .upload-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+
+  .avatar-upload {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    .profile-avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .upload-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(var(--ion-color-primary-rgb), 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+
+      .camera-icon {
         color: white;
-        text-align: center;
-        padding: 8px;
+        font-size: 2rem;
       }
     }
-    
-    .upload-button {
-      margin-top: 10px;
-    }
-  }
-  
-  .role-switcher {
-    margin: 15px auto;
-    max-width: 300px;
-  }
-  
-  .profile-form {
-    background: transparent;
-    margin: 20px 0;
-  }
-  
-  .action-buttons {
-    padding: 0 16px;
-    
-    ion-button {
-      margin-bottom: 12px;
-    }
-    
-    .car-management-button {
-      --border-color: var(--ion-color-primary);
+
+    &:hover .upload-overlay {
+      opacity: 1;
     }
   }
 
-ion-button[logout-button] {
-  --padding-start: 8px;
-  --padding-end: 8px;
-  
-  ion-icon {
-    font-size: 1.5em;
+  .upload-button {
+    margin-top: 10px;
+    --color: var(--ion-color-primary);
+  }
+}
+
+.user-info {
+  text-align: center;
+  margin-bottom: 20px;
+
+  h2 {
+    margin: 5px 0;
+    font-weight: 600;
+    color: var(--ion-color-primary);
+  }
+
+  .email {
+    margin: 0;
+    color: var(--ion-color-medium);
+    font-size: 0.9rem;
+  }
+}
+
+.role-switcher {
+  margin: 20px 0;
+  --background: var(--ion-color-light);
+  border-radius: 50px;
+  padding: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  ion-segment-button {
+    --indicator-color: var(--ion-color-primary);
+    --color: var(--ion-color-medium);
+    --color-checked: white;
+    border-radius: 50px;
+    min-height: 40px;
+
+    ion-icon {
+      margin-right: 5px;
+    }
+  }
+}
+
+.profile-form {
+  background: transparent;
+  margin-bottom: 20px;
+
+  ion-item {
+    --background: transparent;
+    --border-color: var(--ion-color-light-shade);
+    --highlight-color-focused: var(--ion-color-primary);
+    --padding-start: 0;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    transition: box-shadow 0.3s ease;
+
+    &:focus-within {
+      box-shadow: 0 2px 8px rgba(var(--ion-color-primary-rgb), 0.1);
+    }
+
+    ion-icon {
+      color: var(--ion-color-primary);
+      margin-right: 10px;
+    }
+  }
+}
+
+.action-buttons {
+  margin: 30px 0;
+
+  ion-button {
+    margin-bottom: 15px;
+    --box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:active {
+      transform: translateY(2px);
+      --box-shadow: 0 2px 6px rgba(var(--ion-color-primary-rgb), 0.2);
+    }
+  }
+
+  .save-button {
+    --background: var(--ion-color-primary);
+    --background-activated: var(--ion-color-primary-shade);
+  }
+
+  .car-management-button {
+    --color: var(--ion-color-primary);
+    --border-color: var(--ion-color-primary);
+    --background-activated: rgba(var(--ion-color-primary-rgb), 0.1);
+  }
+}
+
+/* Dark mode styles */
+.dark-mode {
+  .profile-form ion-item {
+    --border-color: var(--ion-color-dark-shade);
+  }
+
+  .role-switcher {
+    --background: var(--ion-color-dark);
   }
 }

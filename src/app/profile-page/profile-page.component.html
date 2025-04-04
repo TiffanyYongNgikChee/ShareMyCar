@@ -1,12 +1,24 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Profile</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>My Profile</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
   <!-- Loading indicator -->
-  <ion-loading [isOpen]="isLoading" message="Loading..."></ion-loading>
+  <ion-loading 
+    [isOpen]="isLoading" 
+    message="Loading..." 
+    spinner="crescent"
+  ></ion-loading>
 
   <!-- Profile Picture Section -->
   <div class="profile-picture-container">
@@ -16,7 +28,7 @@
         class="profile-avatar"
       />
       <div class="upload-overlay">
-        <ion-icon name="camera"></ion-icon>
+        <ion-icon name="camera" class="camera-icon"></ion-icon>
       </div>
     </div>
     <input 
@@ -37,6 +49,12 @@
     </ion-button>
   </div>
 
+  <!-- User Info Section -->
+  <div class="user-info">
+    <h2>{{ userData.username || 'New User' }}</h2>
+    <p class="email">{{ userData.email }}</p>
+  </div>
+
   <!-- Role Switcher -->
   <ion-segment 
     [value]="currentRole" 
@@ -44,49 +62,55 @@
     class="role-switcher"
   >
     <ion-segment-button value="rider">
+      <ion-icon name="bicycle"></ion-icon>
       <ion-label>Rider</ion-label>
     </ion-segment-button>
     <ion-segment-button value="owner">
+      <ion-icon name="car-sport"></ion-icon>
       <ion-label>Owner</ion-label>
     </ion-segment-button>
   </ion-segment>
 
   <!-- Profile Form -->
-  <ion-list class="profile-form">
+  <ion-list lines="full" class="profile-form">
     <ion-item>
-      <ion-label position="stacked">Username</ion-label>
+      <ion-label position="floating" color="primary">Username</ion-label>
       <ion-input 
         [(ngModel)]="userData.username" 
         type="text"
         required
       ></ion-input>
+      <ion-icon name="person-circle" slot="start"></ion-icon>
     </ion-item>
 
     <ion-item>
-      <ion-label position="stacked">Email</ion-label>
+      <ion-label position="floating" color="primary">Email</ion-label>
       <ion-input 
         [(ngModel)]="userData.email" 
         type="email" 
         [disabled]="true"
       ></ion-input>
+      <ion-icon name="mail" slot="start"></ion-icon>
     </ion-item>
 
     <ion-item>
-      <ion-label position="stacked">Phone Number</ion-label>
+      <ion-label position="floating" color="primary">Phone Number</ion-label>
       <ion-input 
         [(ngModel)]="userData.phone" 
         type="tel"
         placeholder="Enter phone number"
       ></ion-input>
+      <ion-icon name="call" slot="start"></ion-icon>
     </ion-item>
 
     <ion-item>
-      <ion-label position="stacked">Home Address</ion-label>
+      <ion-label position="floating" color="primary">Home Address</ion-label>
       <ion-textarea 
         [(ngModel)]="userData.address" 
         rows="3"
         placeholder="Enter your full address"
       ></ion-textarea>
+      <ion-icon name="home" slot="start"></ion-icon>
     </ion-item>
   </ion-list>
 
@@ -96,6 +120,8 @@
       expand="block" 
       (click)="updateProfile()"
       [disabled]="isLoading"
+      shape="round"
+      class="save-button"
     >
       <ion-icon name="save" slot="start"></ion-icon>
       Save Profile
@@ -107,13 +133,10 @@
       fill="outline" 
       (click)="onCarIconClick()"
       class="car-management-button"
+      shape="round"
     >
       <ion-icon name="car-sport" slot="start"></ion-icon>
       {{ currentRole === 'owner' ? 'Manage My Cars' : 'View Available Cars' }}
     </ion-button>
   </div>
-  <ion-item button (click)="logout()">
-    <ion-icon name="log-out-outline" slot="start"></ion-icon>
-    <ion-label>Logout</ion-label>
-  </ion-item>
 </ion-content>
