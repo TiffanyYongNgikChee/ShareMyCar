@@ -10,7 +10,7 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { NewMessageComponent } from '../new-message/new-message.component';
 import { addIcons } from 'ionicons';
-import {add} from 'ionicons/icons';
+import {add,chatbubbleOutline} from 'ionicons/icons';
 import { getDocs, collection, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../main';
 
@@ -42,7 +42,8 @@ export class MessageComponent  implements OnInit, OnDestroy {
     private modalCtrl: ModalController
   ) {
     addIcons({
-      add
+      add,
+      chatbubbleOutline
       });
   }
 
@@ -81,51 +82,38 @@ export class MessageComponent  implements OnInit, OnDestroy {
 
   async selectConversation(userId: string) {
     this.selectedUserId = userId;
-    this.messages = []; // Reset messages when conversation changes
-  
-    // Load user details first
+    this.messages = []; // Clear previous messages
+
+    // Load user details
     const userDetails = await this.messageService.getUserDetails(userId);
     this.otherUserName = userDetails.name;
 
-    // Combine local updates with Firestore stream
-    this.activeChat$ = this.messageService.getChatMessages(userId).pipe(
-      tap(messages => {
-        // Merge with any locally added messages
-        const allMessages = [...this.messages, ...messages]
-          .filter((v, i, a) => a.findIndex(m => m.id === v.id) === i)
-          .sort((a, b) => a.timestamp?.seconds - b.timestamp?.seconds);
+    // Subscribe to Firestore messages
+    const sub = this.messageService.getChatMessages(userId).subscribe({
+      next: (firestoreMessages) => {
+        // Replace local messages with fresh Firestore data
+        this.messages = [...firestoreMessages]
+          .sort((a, b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
         
-        this.messages = allMessages;
-
-        const unreadMessages = messages
-          .filter(m => m.receiverId === this.currentUserId && !m.read && m.id)
-          .map(m => m.id as string);
-        
-        if (unreadMessages.length > 0) {
-          this.messageService.markMessagesAsRead(unreadMessages);
-        }
-      })
-    );
-      // Update URL to reflect selected conversation
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { userId },
-        replaceUrl: true
-      });
+        // Mark messages as read
+        this.markMessagesAsRead(firestoreMessages);
+      },
+      error: (err) => console.error('Error loading messages:', err)
+    });
+    this.subscriptions.push(sub);
   }
 
   async sendMessage() {
     if (!this.newMessage.trim() || !this.selectedUserId) return;
-    
-    // Create temporary local message
+
+    // Create temporary message
     const tempMessage: Message = {
       senderId: this.currentUserId,
-      senderName: this.otherUserName, // Or get from auth service
+      senderName: await this.getCurrentUserName(),
       receiverId: this.selectedUserId,
       content: this.newMessage,
-      timestamp: { seconds: Math.floor(Date.now() / 1000) } as any,
-      read: false,
-      isLocal: true // Optional flag for local messages
+      timestamp: { seconds: Math.floor(Date.now() / 1000) },
+      read: false
     };
 
     // Add to local array immediately
@@ -133,16 +121,26 @@ export class MessageComponent  implements OnInit, OnDestroy {
     this.newMessage = '';
 
     try {
+      // Send to Firestore
       await this.messageService.sendMessage(this.selectedUserId, tempMessage.content);
-      
-      // Remove local flag after successful send
-      this.messages = this.messages.map(m => 
-        m === tempMessage ? {...m, isLocal: false} : m
-      );
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Send failed:', error);
       // Remove failed message
       this.messages = this.messages.filter(m => m !== tempMessage);
+    }
+
+    this.messageService.getChatMessages(this.selectedUserId).subscribe(messages => {
+      console.log('After send:', messages);
+    });
+  }
+
+  private markMessagesAsRead(messages: Message[]) {
+    const unreadIds = messages
+      .filter(m => m.receiverId === this.currentUserId && !m.read && m.id)
+      .map(m => m.id as string);
+    
+    if (unreadIds.length > 0) {
+      this.messageService.markMessagesAsRead(unreadIds);
     }
   }
 

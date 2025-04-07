@@ -60,20 +60,48 @@ export class MessageService {
 
   // Get real-time messages between two users
   getChatMessages(otherUserId: string): Observable<Message[]> {
-    const messagesSubject = new BehaviorSubject<Message[]>([]);
+    console.log('Fetching messages between', this.currentUserId, 'and', otherUserId); // Debug 1
     
-    if (!this.currentUserId) {
-      this.authService.getCurrentUser().then(user => {
-        if (user) {
-          this.currentUserId = user.uid;
-          this.setupMessagesListener(otherUserId, messagesSubject);
-        }
-      });
-    } else {
-      this.setupMessagesListener(otherUserId, messagesSubject);
-    }
-
-    return messagesSubject.asObservable();
+    return new Observable(subscriber => {
+      if (!this.currentUserId) {
+        subscriber.error('User not authenticated');
+        return;
+      }
+  
+      // Create two separate queries
+      const sentQuery = query(
+        this.messagesCollection,
+        where('senderId', '==', this.currentUserId),
+        where('receiverId', '==', otherUserId),
+        orderBy('timestamp', 'asc')
+      );
+  
+      const receivedQuery = query(
+        this.messagesCollection,
+        where('senderId', '==', otherUserId),
+        where('receiverId', '==', this.currentUserId),
+        orderBy('timestamp', 'asc')
+      );
+  
+      // Combine results
+      Promise.all([
+        getDocs(sentQuery),
+        getDocs(receivedQuery)
+      ]).then(([sentSnap, receivedSnap]) => {
+        const messages: Message[] = [];
+        
+        sentSnap.forEach(doc => messages.push({ id: doc.id, ...doc.data() as Message }));
+        receivedSnap.forEach(doc => messages.push({ id: doc.id, ...doc.data() as Message }));
+  
+        // Sort combined results
+        messages.sort((a, b) => 
+          (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0)
+        );
+        
+        subscriber.next(messages);
+        subscriber.complete();
+      }).catch(err => subscriber.error(err));
+    });
   }
 
   private setupMessagesListener(otherUserId: string, subject: BehaviorSubject<Message[]>) {

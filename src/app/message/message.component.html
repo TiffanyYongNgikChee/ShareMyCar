@@ -44,12 +44,11 @@
       <div class="message-list">
         <div *ngFor="let message of messages" 
              [class.sent]="message.senderId === currentUserId"
-             [class.received]="message.senderId !== currentUserId"
-             [class.local]="message.isLocal">
+             [class.received]="message.senderId !== currentUserId">
+             
           <div class="message-content">{{ message.content }}</div>
           <div class="message-time">
-            {{ (message.timestamp?.seconds * 1000 || message.timestamp?.toDate()?.getTime()) | date:'shortTime' }}
-            <ion-spinner *ngIf="message.isLocal" name="lines"></ion-spinner>
+            {{ (message.timestamp?.seconds * 1000) | date:'shortTime' }}
           </div>
         </div>
       </div>
