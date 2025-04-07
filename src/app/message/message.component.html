@@ -1,3 +1,81 @@
-<p>
-  message works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Messages</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openNewMessageModal()">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="messages-container">
+    <!-- Conversations List -->
+    <div class="conversation-list" *ngIf="hasConversations">
+      <ion-list lines="full">
+        <ion-item 
+          *ngFor="let conversation of conversations$ | async" 
+          [class.active]="conversation.userId === selectedUserId"
+          (click)="selectConversation(conversation.userId)">
+          
+          <ion-avatar slot="start">
+            <img [src]="'assets/images/avatar-placeholder.png'" alt="User avatar">
+          </ion-avatar>
+          
+          <ion-label>
+            <h2>{{ conversation.userName }}</h2>
+            <p class="last-message">{{ conversation.lastMessage}}</p>
+          </ion-label>
+          
+          <div slot="end" class="conversation-meta">
+            <span class="time">{{ conversation.timestamp | date:'shortTime' }}</span>
+            <ion-badge color="primary" *ngIf="conversation.unreadCount > 0">
+              {{ conversation.unreadCount }}
+            </ion-badge>
+          </div>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && !hasConversations">
+      <ion-icon name="chatbubbles-outline"></ion-icon>
+      <h2>No conversations yet</h2>
+      <p>Start a new conversation by clicking the + button</p>
+      <ion-button (click)="openNewMessageModal()">New Message</ion-button>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="chat-area" *ngIf="selectedUserId">
+      <div class="messages" #messagesContainer>
+        <div *ngFor="let message of activeChat$ | async" 
+             [class.sent]="message.senderId === currentUserId"
+             [class.received]="message.senderId !== currentUserId"
+             class="message">
+          
+          <div class="message-content">
+            <p>{{ message.content }}</p>
+            <span class="message-time">{{ message.timestamp?.toDate() | date:'shortTime' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message Input -->
+      <div class="message-input">
+        <ion-item>
+          <ion-textarea 
+            [(ngModel)]="newMessage" 
+            placeholder="Type a message..." 
+            rows="1" 
+            autoGrow="true"
+            (keyup.enter)="sendMessage()">
+          </ion-textarea>
+          <ion-button slot="end" fill="clear" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+            <ion-icon name="send"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </div>
+    </div>
+  </div>
+</ion-content>

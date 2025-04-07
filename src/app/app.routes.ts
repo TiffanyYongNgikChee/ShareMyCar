@@ -46,4 +46,12 @@ export const routes: Routes = [
     path: 'request',
     loadComponent: () => import('./rental-requests/rental-requests.component').then((m) => m.RentalRequestsComponent),
   },
+  {
+    path: 'message',
+    loadComponent: () => import('./message/message.component').then((m) =>m.MessageComponent),
+  },
+  {
+    path: 'new-message',
+    loadComponent: () => import('./new-message/new-message.component').then((m) =>m.NewMessageComponent),
+  },
 ];

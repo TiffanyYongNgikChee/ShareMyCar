@@ -30,7 +30,7 @@ export interface Message {
   read: boolean;
 }
 
-interface Conversation {
+export interface Conversation {
   userId: string;
   userName: string;
   lastMessage: string;
