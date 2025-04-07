@@ -11,10 +11,10 @@
 
 <ion-content>
   <ion-searchbar 
-    placeholder="Search users..." 
+    placeholder="Search users..."
     [(ngModel)]="searchQuery"
     (ionInput)="onSearch($event)">
-  </ion-searchbar>
+</ion-searchbar>
 
   <ion-list *ngIf="filteredUsers.length > 0">
     <ion-item 

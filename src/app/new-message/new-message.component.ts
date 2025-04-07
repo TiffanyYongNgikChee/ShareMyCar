@@ -26,8 +26,8 @@ interface UserProfile {
 })
 export class NewMessageComponent implements OnInit {
 
-  allUsers: UserProfile[] = [];
-  filteredUsers: UserProfile[] = [];
+  allUsers: any[] = [];
+  filteredUsers: any[] = [];
   searchQuery: string = '';
   currentUserId = '';
   existingChatUserIds: string[] = [];
@@ -45,20 +45,13 @@ export class NewMessageComponent implements OnInit {
   }
 
   async ngOnInit() {
-    const user = await this.userService.currentUser$.toPromise();
-    if (!user) return;
-    this.currentUserId = user.uid;
-
-    // 1. Get existing conversations to exclude
-    const conversations = await this.messageService.getConversations();
-    this.existingChatUserIds = conversations.map(c => c.userId);
-
-    // 2. Get all users (maybe from your Firestore /users collection)
-    const all = await this.getAllUsersExceptCurrent();
-    
-    // 3. Filter out users we already chat with
-    this.allUsers = all.filter(u => !this.existingChatUserIds.includes(u.uid));
-    this.filteredUsers = [...this.allUsers]; // initial display
+    try {
+      const users = await this.userService.getAllUsers(); // Or however you fetch users
+      this.allUsers = users;
+      this.filteredUsers = [...this.allUsers]; // Initialize filtered users with all users
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
   }
 
   async getAllUsersExceptCurrent(): Promise<UserProfile[]> {
@@ -70,6 +63,7 @@ export class NewMessageComponent implements OnInit {
 
   onSearch(event: any) {
     const query = event.detail.value?.toLowerCase() || '';
+    console.log('Search query:', query);
     this.filteredUsers = this.allUsers.filter(user =>
       user.username.toLowerCase().includes(query)
     );

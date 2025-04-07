@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, collection,getDocs } from '@angular/fire/firestore';
 import { Auth, authState, User } from '@angular/fire/auth';
 import { Observable, of, from,map } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -78,4 +78,33 @@ export class UserService {
   async getUsers(uids: string[]): Promise<(UserProfile | null)[]> {
     return Promise.all(uids.map(uid => this.getUser(uid)));
   }
+
+  // Add this method to your UserService
+  async getAllUsers(): Promise<UserProfile[]> {
+    try {
+      const usersRef = collection(this.firestore, 'users');
+      const querySnapshot = await getDocs(usersRef);
+      const users: UserProfile[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        const userData = doc.data() as UserProfile;
+        
+        // Destructure and exclude 'uid' from the userData object
+        const { uid, ...userWithoutUid } = userData;
+  
+        // Ensure 'uid' is set from doc.id
+        users.push({
+          uid: doc.id,   // Explicitly set the uid here from doc.id
+          ...userWithoutUid // Spread the rest of the user data, excluding 'uid'
+        });
+      });
+  
+      return users;
+    } catch (error) {
+      console.error('Error fetching all users:', error);
+      return [];
+    }
+  }
 }
+
+
