@@ -28,6 +28,7 @@ export interface Message {
   content: string;
   timestamp: any;
   read: boolean;
+  isLocal?: boolean; // Add this optional flag
 }
 
 export interface Conversation {
@@ -36,6 +37,7 @@ export interface Conversation {
   lastMessage: string;
   timestamp: Date;
   unreadCount: number;
+  photoUrl?: string;
 }
 
 @Injectable({
@@ -194,33 +196,34 @@ export class MessageService {
       userIds.add(otherUserId);
     });
 
-    // Get all user names in one batch
-    const userNames = new Map<string, string>();
-    const userPromises = Array.from(userIds).map(async userId => {
-      const userDoc = await getDoc(doc(db, 'userNames', userId));
-      userNames.set(userId, userDoc.exists() ? userDoc.data()['name'] : 'Unknown');
-    });
-    await Promise.all(userPromises);
+    // Get all user details (including photoUrl) in one batch
+  const userDetails = new Map<string, { name: string, photoUrl: string }>();
+  const userPromises = Array.from(userIds).map(async userId => {
+    const details = await this.getUserDetails(userId); // Reuse existing method
+    userDetails.set(userId, details);
+  });
+  await Promise.all(userPromises);
 
-    // Now build conversations
-    querySnapshot.forEach(doc => {
-      const message = doc.data() as Message;
-      const otherUserId = message.senderId === this.currentUserId ? message.receiverId : message.senderId;
-      const otherUserName = userNames.get(otherUserId) || 'Unknown';
+  // Build conversations with photoUrl
+  querySnapshot.forEach(doc => {
+    const message = doc.data() as Message;
+    const otherUserId = message.senderId === this.currentUserId ? message.receiverId : message.senderId;
+    const details = userDetails.get(otherUserId) || { name: 'Unknown', photoUrl: '' };
 
-      if (!conversationsMap.has(otherUserId)) {
-        conversationsMap.set(otherUserId, {
-          userId: otherUserId,
-          userName: otherUserName,
-          lastMessage: message.content,
-          timestamp: message.timestamp?.toDate() || new Date(),
-          unreadCount: message.receiverId === this.currentUserId && !message.read ? 1 : 0
-        });
-      }
-    });
+    if (!conversationsMap.has(otherUserId)) {
+      conversationsMap.set(otherUserId, {
+        userId: otherUserId,
+        userName: details.name,
+        lastMessage: message.content,
+        timestamp: message.timestamp?.toDate() || new Date(),
+        unreadCount: message.receiverId === this.currentUserId && !message.read ? 1 : 0,
+        photoUrl: details.photoUrl  // Add this
+      });
+    }
+  });
 
-    return Array.from(conversationsMap.values());
-  }
+  return Array.from(conversationsMap.values());
+}
 
   // Get user details for chat
   async getUserDetails(userId: string): Promise<{ name: string, photoUrl: string }> {

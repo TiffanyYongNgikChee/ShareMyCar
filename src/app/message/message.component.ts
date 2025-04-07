@@ -11,7 +11,8 @@ import { FormsModule } from '@angular/forms';
 import { NewMessageComponent } from '../new-message/new-message.component';
 import { addIcons } from 'ionicons';
 import {add} from 'ionicons/icons';
-
+import { getDocs, collection, doc, getDoc } from 'firebase/firestore';
+import { db } from '../../main';
 
 @Component({
   selector: 'app-message',
@@ -28,6 +29,8 @@ export class MessageComponent  implements OnInit, OnDestroy {
   newMessage = '';
   isLoading = true;
   hasConversations = false;
+  otherUserName: string = '';
+  messages: Message[] = []; // for local message storage
 
   private subscriptions: Subscription[] = [];
 
@@ -76,39 +79,79 @@ export class MessageComponent  implements OnInit, OnDestroy {
     });
   }
 
-  selectConversation(userId: string) {
+  async selectConversation(userId: string) {
     this.selectedUserId = userId;
+    this.messages = []; // Reset messages when conversation changes
+  
+    // Load user details first
+    const userDetails = await this.messageService.getUserDetails(userId);
+    this.otherUserName = userDetails.name;
+
+    // Combine local updates with Firestore stream
     this.activeChat$ = this.messageService.getChatMessages(userId).pipe(
       tap(messages => {
-        // Filter out undefined IDs and mark messages as read
+        // Merge with any locally added messages
+        const allMessages = [...this.messages, ...messages]
+          .filter((v, i, a) => a.findIndex(m => m.id === v.id) === i)
+          .sort((a, b) => a.timestamp?.seconds - b.timestamp?.seconds);
+        
+        this.messages = allMessages;
+
         const unreadMessages = messages
           .filter(m => m.receiverId === this.currentUserId && !m.read && m.id)
-          .map(m => m.id as string); // Cast to string[] since we filtered out undefined
+          .map(m => m.id as string);
         
         if (unreadMessages.length > 0) {
           this.messageService.markMessagesAsRead(unreadMessages);
         }
       })
     );
-    
-    // Update URL to reflect selected conversation
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { userId },
-      replaceUrl: true
-    });
+      // Update URL to reflect selected conversation
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { userId },
+        replaceUrl: true
+      });
   }
 
   async sendMessage() {
     if (!this.newMessage.trim() || !this.selectedUserId) return;
     
+    // Create temporary local message
+    const tempMessage: Message = {
+      senderId: this.currentUserId,
+      senderName: this.otherUserName, // Or get from auth service
+      receiverId: this.selectedUserId,
+      content: this.newMessage,
+      timestamp: { seconds: Math.floor(Date.now() / 1000) } as any,
+      read: false,
+      isLocal: true // Optional flag for local messages
+    };
+
+    // Add to local array immediately
+    this.messages = [...this.messages, tempMessage];
+    this.newMessage = '';
+
     try {
-      await this.messageService.sendMessage(this.selectedUserId, this.newMessage);
-      this.newMessage = '';
+      await this.messageService.sendMessage(this.selectedUserId, tempMessage.content);
+      
+      // Remove local flag after successful send
+      this.messages = this.messages.map(m => 
+        m === tempMessage ? {...m, isLocal: false} : m
+      );
     } catch (error) {
       console.error('Error sending message:', error);
-      // Show error to user
+      // Remove failed message
+      this.messages = this.messages.filter(m => m !== tempMessage);
     }
+  }
+
+  private async getCurrentUserName(): Promise<string> {
+    const user = await this.authService.getCurrentUser();
+    if (!user) return 'You';
+    
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    return userDoc.exists() ? userDoc.data()['username'] : 'You';
   }
 
   async openNewMessageModal() {
