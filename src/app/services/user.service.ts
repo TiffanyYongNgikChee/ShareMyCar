@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Firestore, doc, getDoc, collection, query, where, getDocs } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { Auth, authState, User } from '@angular/fire/auth';
-import { Observable, of, from } from 'rxjs';
-import { switchMap, map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Observable, of, from,map } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 interface UserProfile {
   uid: string;
@@ -10,8 +10,7 @@ interface UserProfile {
   email: string;
   phone?: string;
   profilePicture?: string;
-  displayName?: string; // Added for messaging compatibility
-  searchKeywords?: string[]; // Added for search functionality
+  // Add other user fields you store
 }
 
 @Injectable({

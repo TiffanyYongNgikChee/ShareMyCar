@@ -1,3 +1,38 @@
-<p>
-  new-message works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>New Message</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-searchbar 
+    placeholder="Search users..." 
+    [(ngModel)]="searchQuery"
+    (ionInput)="onSearch($event)">
+  </ion-searchbar>
+
+  <ion-list *ngIf="filteredUsers.length > 0">
+    <ion-item 
+      button 
+      *ngFor="let user of filteredUsers" 
+      (click)="selectUser(user)">
+      <ion-avatar slot="start">
+        <img [src]="user.profilePicture || 'assets/images/avatar-placeholder.png'">
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ user.username }}</h2>
+        <p>{{ user.email }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <div class="empty-state" *ngIf="filteredUsers.length === 0">
+    <ion-icon name="person-remove-outline"></ion-icon>
+    <p>No users found</p>
+  </div>
+</ion-content>
