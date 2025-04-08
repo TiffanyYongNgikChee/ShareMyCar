@@ -55,7 +55,7 @@ export class NewMessageComponent implements OnInit {
   }
 
   async getAllUsersExceptCurrent(): Promise<UserProfile[]> {
-    // You can customize this to fetch all users from Firestore directly
+    // You can custo`mize this to fetch all users from Firestore directly
     const response = await fetch('/assets/mock-users.json'); // replace with your actual DB fetch logic
     const users: UserProfile[] = await response.json();
     return users.filter(u => u.uid !== this.currentUserId);
@@ -71,6 +71,7 @@ export class NewMessageComponent implements OnInit {
 
   selectUser(user: UserProfile) {
     this.modalCtrl.dismiss({ selectedUserId: user.uid });
+    
   }
 
   cancel() {

@@ -10,7 +10,7 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { NewMessageComponent } from '../new-message/new-message.component';
 import { addIcons } from 'ionicons';
-import {add,chatbubbleOutline,send,chatbubblesOutline} from 'ionicons/icons';
+import {add,chatbubbleOutline,send,chatbubblesOutline,checkmarkDone,arrowBack} from 'ionicons/icons';
 import { getDocs, collection, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../main';
 
@@ -25,12 +25,13 @@ export class MessageComponent  implements OnInit, OnDestroy {
   conversations$: Observable<Conversation[]> = of([]);
   activeChat$: Observable<Message[]> = of([]);
   currentUserId: string = '';
-  selectedUserId: string = '';
+  selectedUserId: string | null = null;
   newMessage = '';
   isLoading = true;
   hasConversations = false;
   otherUserName: string = '';
   messages: Message[] = []; // for local message storage
+  isChatOpen = false;
 
   private subscriptions: Subscription[] = [];
 
@@ -45,7 +46,9 @@ export class MessageComponent  implements OnInit, OnDestroy {
       add,
       chatbubbleOutline,
       send,
-      chatbubblesOutline
+      chatbubblesOutline,
+      checkmarkDone,
+      arrowBack
       });
   }
 
@@ -89,6 +92,7 @@ export class MessageComponent  implements OnInit, OnDestroy {
       );
     });
   }
+
 
   async selectConversation(userId: string) {
     this.selectedUserId = userId;
@@ -169,13 +173,26 @@ export class MessageComponent  implements OnInit, OnDestroy {
         currentUserId: this.currentUserId
       }
     });
-    
+  
     await modal.present();
-    
+  
     const { data } = await modal.onWillDismiss();
     if (data?.selectedUserId) {
       this.selectConversation(data.selectedUserId);
+      this.isChatOpen = true; // ⬅️ This will show the chat page
     }
+  }
+  openChat(conv: any) {
+    this.selectedUserId = conv.userId;
+    this.otherUserName = conv.userName;
+    this.isChatOpen = true;
+    this.selectConversation(conv.userId);
+  }
+  
+  closeChat() {
+    this.selectedUserId = null;
+    this.otherUserName = '';
+    this.isChatOpen = false;
   }
 
   ngOnDestroy() {
