@@ -19,7 +19,9 @@ import {
   speedometerOutline,
   flashOutline,
   filter,
-  fileTray
+  fileTray,
+  home,
+  chatbubbleEllipses
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 
@@ -55,7 +57,9 @@ export class HomePage implements OnInit {
           peopleOutline,
           speedometerOutline,
           flashOutline,
-          filter
+          filter,
+          home,
+          chatbubbleEllipses
       });
     }
 
@@ -164,6 +168,10 @@ export class HomePage implements OnInit {
     } else {
       this.router.navigate(['/login']);
     }
+  }
+
+  goToMessages() {
+    this.router.navigate(['/message']); // Make sure this matches your message page route
   }
 
   async goToDetails(){

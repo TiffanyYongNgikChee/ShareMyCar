@@ -10,7 +10,7 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { NewMessageComponent } from '../new-message/new-message.component';
 import { addIcons } from 'ionicons';
-import {add,chatbubbleOutline,send,chatbubblesOutline,checkmarkDone,arrowBack} from 'ionicons/icons';
+import {add,chatbubbleOutline,send,chatbubblesOutline,checkmarkDone,arrowBack,home} from 'ionicons/icons';
 import { getDocs, collection, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../main';
 
@@ -48,7 +48,8 @@ export class MessageComponent  implements OnInit, OnDestroy {
       send,
       chatbubblesOutline,
       checkmarkDone,
-      arrowBack
+      arrowBack,
+      home
       });
   }
 
@@ -193,6 +194,18 @@ export class MessageComponent  implements OnInit, OnDestroy {
     this.selectedUserId = null;
     this.otherUserName = '';
     this.isChatOpen = false;
+  }
+
+  handleBackButton() {
+    if (this.isChatOpen) {
+      this.closeChat();
+    } else {
+      this.goBackHome();
+    }
+  }
+  
+  goBackHome() {
+    this.router.navigate(['/home']); // Or your home page route
   }
 
   ngOnDestroy() {
