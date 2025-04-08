@@ -10,7 +10,7 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { NewMessageComponent } from '../new-message/new-message.component';
 import { addIcons } from 'ionicons';
-import {add,chatbubbleOutline} from 'ionicons/icons';
+import {add,chatbubbleOutline,send,chatbubblesOutline} from 'ionicons/icons';
 import { getDocs, collection, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../main';
 
@@ -43,22 +43,28 @@ export class MessageComponent  implements OnInit, OnDestroy {
   ) {
     addIcons({
       add,
-      chatbubbleOutline
+      chatbubbleOutline,
+      send,
+      chatbubblesOutline
       });
   }
 
   async ngOnInit() {
+    console.log('Initializing MessageComponent'); // Debug 1
     const user = await this.authService.getCurrentUser();
     if (!user) {
       this.router.navigate(['/login']);
       return;
     }
     this.currentUserId = user.uid;
+    console.log('Current user ID:', this.currentUserId); // Debug 3
 
     // Convert Promise to Observable
     this.conversations$ = new Observable<Conversation[]>(subscriber => {
+      console.log('Fetching conversations...'); // Debug 4
       this.messageService.getConversations().then(
         conversations => {
+          console.log('Conversations received:', conversations); // Debug 5
           subscriber.next(conversations);
           subscriber.complete();
           this.hasConversations = conversations.length > 0;
@@ -66,6 +72,7 @@ export class MessageComponent  implements OnInit, OnDestroy {
           
           // Check if there's a user ID in the route
           this.route.paramMap.subscribe(params => {
+            console.log('Route params:', params); // Debug 6
             const userId = params.get('userId');
             if (userId) {
               this.selectConversation(userId);
@@ -75,7 +82,10 @@ export class MessageComponent  implements OnInit, OnDestroy {
             }
           });
         },
-        error => subscriber.error(error)
+        error => {
+          console.error('Error getting conversations:', error); // Debug 7
+          subscriber.error(error);
+        }
       );
     });
   }

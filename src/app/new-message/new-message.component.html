@@ -22,7 +22,7 @@
       *ngFor="let user of filteredUsers" 
       (click)="selectUser(user)">
       <ion-avatar slot="start">
-        <img [src]="user.profilePicture || 'assets/images/avatar-placeholder.png'">
+        <img [src]="user.profilePicture || 'assets/profile.png'">
       </ion-avatar>
       <ion-label>
         <h2>{{ user.username }}</h2>

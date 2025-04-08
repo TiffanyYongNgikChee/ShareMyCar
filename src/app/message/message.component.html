@@ -19,7 +19,7 @@
           [class.active]="conv.userId === selectedUserId"
           (click)="selectConversation(conv.userId)">
           <ion-avatar slot="start">
-            <img [src]="conv.photoUrl || 'assets/default-profile.png'">
+            <img [src]="conv.photoUrl || 'assets/profile.png'">
           </ion-avatar>
           <ion-label>
             <h2>{{ conv.userName }}</h2>
