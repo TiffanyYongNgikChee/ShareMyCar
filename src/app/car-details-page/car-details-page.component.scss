@@ -1,56 +1,175 @@
-.car-image {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
+.cute-theme {
+  --ion-color-primary: #5d9cec;
+  --ion-color-primary-rgb: 93,156,236;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255,255,255;
+  --ion-color-primary-shade: #5289d0;
+  --ion-color-primary-tint: #6da6ee;
+
+  ion-content {
+    --background: #f8faff;
   }
-  
-  .owner-info {
-    --padding-start: 0;
-    --inner-padding-end: 0;
-    padding: 16px;
+
+  .car-images {
+    height: 220px;
+    width: 100%;
     
-    ion-avatar {
-      width: 48px;
-      height: 48px;
+    .image-container {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #e8f0fe;
+    }
+    
+    .car-image {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: cover;
     }
   }
-  
+
+  .owner-card {
+    margin: 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(93, 156, 236, 0.1);
+    
+    .owner-info {
+      --padding-start: 8px;
+      --padding-end: 8px;
+      
+      .owner-avatar {
+        width: 48px;
+        height: 48px;
+        border: 2px solid var(--ion-color-primary);
+      }
+    }
+  }
+
+  .specs-card, .pricing-card, .location-card, .rental-card {
+    margin: 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(93, 156, 236, 0.1);
+    
+    ion-card-header {
+      padding-bottom: 8px;
+      
+      ion-card-title {
+        font-weight: 600;
+        color: #3a3a3a;
+      }
+      
+      ion-card-subtitle {
+        color: #7a7a7a;
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .specs-list {
+    ion-item {
+      --padding-start: 0;
+      --inner-padding-end: 0;
+      --min-height: 40px;
+      
+      ion-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+
   .features {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 16px;
+    margin-top: 12px;
+    
+    ion-chip {
+      margin: 4px;
+      font-size: 0.8rem;
+    }
   }
-  
+
+  .map-container {
+    height: 150px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 8px;
+    background: #e8f0fe;
+    
+    .map-placeholder {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .form-item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    margin-bottom: 16px;
+    
+    ion-label {
+      font-size: 0.9rem;
+      color: #5a5a5a;
+    }
+    
+    ion-input, ion-textarea {
+      background: #f0f5ff;
+      border-radius: 8px;
+      --padding-start: 12px;
+      --padding-end: 12px;
+      margin-top: 8px;
+    }
+  }
+
   .total-price {
+    background: #f0f5ff;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 16px 0;
     text-align: center;
-    margin: 20px 0;
     
     h3 {
-      font-weight: bold;
+      margin: 0;
+      font-weight: 600;
       color: var(--ion-color-primary);
     }
   }
-  
+
   .submit-button {
-    margin-top: 16px;
+    margin-top: 8px;
+    --border-radius: 8px;
+    --box-shadow: 0 2px 8px rgba(93, 156, 236, 0.3);
+    font-weight: 500;
   }
-  
+
   .error-state {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    padding: 40px;
+    padding: 32px;
     
     ion-icon {
-      font-size: 64px;
-      color: var(--ion-color-danger);
+      font-size: 3rem;
+      color: var(--ion-color-primary);
+      margin-bottom: 16px;
     }
     
     h2 {
-      margin-top: 16px;
-      font-weight: bold;
+      font-weight: 600;
+      margin-bottom: 8px;
     }
     
     p {
-      color: var(--ion-color-medium);
+      color: #7a7a7a;
+      margin-bottom: 24px;
+    }
+    
+    ion-button {
+      --color: var(--ion-color-primary);
     }
   }
+}
