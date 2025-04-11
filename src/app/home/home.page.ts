@@ -21,7 +21,8 @@ import {
   filter,
   fileTray,
   home,
-  chatbubbleEllipses
+  chatbubbleEllipses,
+  bicycle
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 
@@ -59,7 +60,8 @@ export class HomePage implements OnInit {
           flashOutline,
           filter,
           home,
-          chatbubbleEllipses
+          chatbubbleEllipses,
+          bicycle
       });
     }
 

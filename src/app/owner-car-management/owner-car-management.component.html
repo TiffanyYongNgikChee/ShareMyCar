@@ -49,11 +49,6 @@
           <ion-icon [name]="car.isAvailable ? 'eye-off-outline' : 'eye-outline'" slot="icon-only"></ion-icon>
         </ion-item-option>
 
-        <!-- Edit Button -->
-        <ion-item-option color="primary" (click)="editCar(car.id)">
-          <ion-icon name="create-outline" slot="icon-only"></ion-icon>
-        </ion-item-option>
-
         <!-- View Requests -->
         <ion-item-option color="tertiary" (click)="viewRentalRequests(car.id)">
           <ion-icon name="list-outline" slot="icon-only"></ion-icon>

@@ -6,7 +6,8 @@ import { db, auth } from '../../main'; // Make sure auth is exported from main.t
 import { collection, addDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Router } from '@angular/router';
-
+import { addIcons } from 'ionicons';
+import {images,settings,checkmarkCircle,cash,informationCircle,cloudUpload,camera,navigate} from 'ionicons/icons';
 
 @Component({
   selector: 'app-car-register',
@@ -49,6 +50,17 @@ export class CarRegisterComponent implements OnInit, AfterViewInit {
       longitude: [''],
       features: [[]] // Added features array
     });
+
+    addIcons({
+      images,
+      settings,
+      checkmarkCircle,
+      cash,
+      informationCircle,
+      camera,
+      navigate,
+      cloudUpload
+      });
   }
 
   ngOnInit() {
