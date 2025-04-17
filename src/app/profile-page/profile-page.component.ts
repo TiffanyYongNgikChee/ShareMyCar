@@ -9,7 +9,7 @@ import { StorageService } from '../services/storage.service';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../main';
 import { addIcons } from 'ionicons';
-import { camera, cloudUpload, save, carSport,logOutOutline } from 'ionicons/icons';
+import { camera, cloudUpload, save, carSport,logOutOutline, call,home,mail,personCircle,bicycle } from 'ionicons/icons';
 type UserRole = 'rider' | 'owner';
 
 @Component({
@@ -34,7 +34,7 @@ export class ProfilePageComponent implements OnInit{
   constructor(private authService: AuthService,
     private storageService: StorageService) {
       // Add icons in constructor
-      addIcons({ camera, cloudUpload, save, carSport,logOutOutline });
+      addIcons({ camera, cloudUpload, save, carSport,logOutOutline,call,home,mail,personCircle,bicycle });
     }
 
     logout() {

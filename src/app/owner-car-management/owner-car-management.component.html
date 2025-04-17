@@ -5,60 +5,67 @@
     </ion-buttons>
     <ion-title>My Cars</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="registerNewCar()">
+      <ion-button (click)="registerNewCar()" class="add-button">
         <ion-icon slot="icon-only" name="add-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="manage-cars-content">
   <ion-loading [isOpen]="isLoading" message="Loading your cars..."></ion-loading>
 
   <!-- Empty State -->
   <div class="empty-state" *ngIf="cars.length === 0 && !isLoading">
-    <ion-icon name="car-sport-outline" class="empty-icon"></ion-icon>
+    <div class="empty-illustration">
+      <img src="assets/images/no-cars-illustration.svg" alt="No cars registered">
+    </div>
     <h2>No Cars Registered</h2>
-    <p>You haven't registered any cars yet</p>
-    <ion-button (click)="registerNewCar()">Register Your First Car</ion-button>
+    <p>Start sharing your car and earn money</p>
+    <ion-button (click)="registerNewCar()" shape="round" fill="solid">
+      Register Your First Car
+      <ion-icon name="arrow-forward" slot="end"></ion-icon>
+    </ion-button>
   </div>
 
   <!-- Car List -->
-  <ion-list *ngIf="cars.length > 0">
-    <ion-item-sliding *ngFor="let car of cars">
-      <ion-item>
-        <ion-thumbnail slot="start">
-          <img [src]="car.images?.[0] || 'assets/default-car.jpg'">
-        </ion-thumbnail>
-        <ion-label>
-          <h2>{{ car.make_model }}</h2>
-          <p>{{ car.year }} • {{ car.car_type }}</p>
-          <p>${{ car.price_per_day }}/day</p>
-          <ion-badge [color]="car.isAvailable ? 'success' : 'danger'">
-            {{ car.isAvailable ? 'Available' : 'Not Available' }}
-          </ion-badge>
-          <ion-badge *ngIf="carRequestCounts[car.id] > 0" color="warning" class="request-badge">
-            {{ carRequestCounts[car.id] }} pending
-          </ion-badge>
-        </ion-label>
-      </ion-item>
+  <div class="car-cards-container" *ngIf="cars.length > 0">
+    <ion-card *ngFor="let car of cars" class="manage-car-card">
+      <div class="car-image-container">
+        <img [src]="car.images?.[0] || 'assets/default-car.jpg'" class="car-image">
+        <div class="car-status-badge" [class.available]="car.isAvailable" [class.not-available]="!car.isAvailable">
+          {{ car.isAvailable ? 'Available' : 'Not Available' }}
+        </div>
+        <div class="pending-requests-badge" *ngIf="carRequestCounts[car.id] > 0">
+          {{ carRequestCounts[car.id] }} pending request{{ carRequestCounts[car.id] > 1 ? 's' : '' }}
+        </div>
+      </div>
 
-      <ion-item-options side="end">
-        <!-- Toggle Availability -->
-        <ion-item-option color="secondary" (click)="toggleAvailability(car)">
-          <ion-icon [name]="car.isAvailable ? 'eye-off-outline' : 'eye-outline'" slot="icon-only"></ion-icon>
-        </ion-item-option>
+      <ion-card-header>
+        <ion-card-title>{{ car.make_model }}</ion-card-title>
+        <ion-card-subtitle>
+          {{ car.year }} • {{ car.car_type }} • ${{ car.price_per_day }}/day
+        </ion-card-subtitle>
+      </ion-card-header>
 
-        <!-- View Requests -->
-        <ion-item-option color="tertiary" (click)="viewRentalRequests(car.id)">
-          <ion-icon name="list-outline" slot="icon-only"></ion-icon>
-        </ion-item-option>
-
-        <!-- Delete Button -->
-        <ion-item-option color="danger" (click)="deleteCar(car.id)">
-          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
+      <ion-card-content>
+        <div class="car-actions">
+          <ion-button fill="outline" (click)="toggleAvailability(car)" class="action-button">
+            <ion-icon [name]="car.isAvailable ? 'eye-off-outline' : 'eye-outline'" slot="start"></ion-icon>
+            {{ car.isAvailable ? 'Make Unavailable' : 'Make Available' }}
+          </ion-button>
+          
+          <ion-button fill="outline" (click)="viewRentalRequests(car.id)" class="action-button">
+            <ion-icon name="list-outline" slot="start"></ion-icon>
+            View Requests
+          </ion-button>
+          
+          <ion-button fill="outline" color="danger" (click)="deleteCar(car.id)" class="action-button">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Delete
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>

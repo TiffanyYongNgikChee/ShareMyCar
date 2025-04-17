@@ -36,7 +36,9 @@ import {
   star,
   chevronDown,
   options,
-  arrowForward
+  arrowForward,
+  flash,
+  carSportOutline
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 
@@ -109,7 +111,9 @@ export class HomePage implements OnInit {
       star,
       chevronDown,
       options,
-      arrowForward
+      arrowForward,
+      flash,
+      carSportOutline
     });
   }
 
@@ -304,8 +308,6 @@ export class HomePage implements OnInit {
   changeLocation(location: string) {
     this.currentLocation = location;
     this.showLocationPicker = false;
-    // You might want to implement location-based filtering here
-    // this.applyLocationFilter();
   }
 
   signUpPage(){
