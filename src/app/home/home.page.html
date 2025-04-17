@@ -31,13 +31,19 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-
 </ion-header>
 
 <ion-content>
   <ion-loading [isOpen]="isLoading"></ion-loading>
-  
-
+  <!-- Quick Filters -->
+  <div class="quick-filters">
+    <ion-chip class="quick-filter" outline *ngFor="let filter of quickFilters" 
+              [class.active]="activeQuickFilter === filter.value"
+              (click)="setQuickFilter(filter.value)">
+      <ion-icon [name]="filter.icon" *ngIf="filter.icon"></ion-icon>
+      <ion-label>{{filter.label}}</ion-label>
+    </ion-chip>
+  </div>
   <!-- Filter Modal -->
   <ion-modal [isOpen]="showFilters">
     <ng-template>
@@ -132,6 +138,23 @@
       </ion-content>
     </ng-template>
   </ion-modal>
+
+  <!-- Hero Video Banner -->
+  <div class="video-banner">
+    <video autoplay muted loop playsinline class="hero-video">
+      <source src="assets/videos/car-driving.mp4" type="video/mp4">
+      <!-- Fallback image -->
+      <img src="assets/images/car-banner.jpg" alt="Car sharing banner">
+    </video>
+    <div class="banner-overlay">
+      <h1 class="banner-title">Your Ride, Anytime, Anywhere</h1>
+      <p class="banner-subtitle">Discover the perfect car for your next adventure</p>
+      <ion-button class="banner-cta" shape="round" fill="solid" color="light" (click)="signUpPage()">
+        Sign Up
+        <ion-icon name="arrow-forward" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
 
   <!-- Car cards - Updated to use filteredCars -->
   <div class="car-grid">
