@@ -17,9 +17,6 @@
 
   <!-- Empty State -->
   <div class="empty-state" *ngIf="cars.length === 0 && !isLoading">
-    <div class="empty-illustration">
-      <img src="assets/images/no-cars-illustration.svg" alt="No cars registered">
-    </div>
     <h2>No Cars Registered</h2>
     <p>Start sharing your car and earn money</p>
     <ion-button (click)="registerNewCar()" shape="round" fill="solid">
@@ -32,7 +29,7 @@
   <div class="car-cards-container" *ngIf="cars.length > 0">
     <ion-card *ngFor="let car of cars" class="manage-car-card">
       <div class="car-image-container">
-        <img [src]="car.images?.[0] || 'assets/default-car.jpg'" class="car-image">
+        <img [src]="car.images || 'assets/default-car.jpg'" class="car-image">
         <div class="car-status-badge" [class.available]="car.isAvailable" [class.not-available]="!car.isAvailable">
           {{ car.isAvailable ? 'Available' : 'Not Available' }}
         </div>

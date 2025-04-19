@@ -41,6 +41,7 @@ export class CarDetailsPageComponent  implements OnInit{
         dropoffTime: ['', Validators.required],
         specialRequests: ['']
       });
+      
 
       addIcons({
         flashOutline,
@@ -73,7 +74,7 @@ export class CarDetailsPageComponent  implements OnInit{
         this.isLoading = false;
       }
     }
-  
+    
     calculateTotal(): number {
       if (!this.car || !this.rentalForm.value.pickupDate || !this.rentalForm.value.dropoffDate) {
         return 0;
