@@ -54,10 +54,18 @@
   <!-- Chat View -->
   <ng-container *ngIf="isChatOpen">
     <div class="message-container">
-      <div *ngFor="let message of messages" class="message-wrapper"
-           [class.sent-wrapper]="message.senderId === currentUserId"
-           [class.received-wrapper]="message.senderId !== currentUserId">
-           <div class="message-bubble">
+      <ng-container *ngFor="let message of messages; let i = index">
+        <!-- Date Separator - Outside the message wrapper -->
+        <div *ngIf="i === 0 || shouldShowDate(messages[i-1], message)" 
+             class="date-separator">
+          <span>{{ (message.timestamp?.seconds * 1000) | date:'fullDate' }}</span>
+        </div>
+        
+        <!-- Message Bubble - Separate div -->
+        <div class="message-wrapper"
+             [class.sent-wrapper]="message.senderId === currentUserId"
+             [class.received-wrapper]="message.senderId !== currentUserId">
+          <div class="message-bubble">
             <div class="message-content">{{ message.content }}</div>
             <div class="message-footer">
               <ion-note>{{ (message.timestamp?.seconds * 1000) | date:'shortTime' }}</ion-note>
@@ -66,7 +74,8 @@
                        [color]="message.read ? 'primary' : 'medium'"></ion-icon>
             </div>
           </div>
-      </div>
+        </div>
+      </ng-container>
     </div>
 
     <ion-footer class="message-composer">

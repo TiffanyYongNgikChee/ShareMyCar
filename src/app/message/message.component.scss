@@ -81,8 +81,7 @@
 
 .message-container {
   padding: 16px;
-  display: flex;
-  flex-direction: column;
+  padding-bottom: 100px;
   min-height: calc(100% - 56px);
 }
 
@@ -202,10 +201,55 @@
   margin-top: 4px;
   
   ion-note {
+    font-size: 0.6875rem;
+    opacity: 0.9;
     margin-right: 4px;
   }
   
   ion-icon {
-    font-size: 16px;
+    font-size: 14px;
+    margin-left: 2px;
   }
+}
+
+/* Date Separator - Modern Design */
+.date-separator {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0;
+  position: relative;
+  
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(25, 118, 210, 0.2);
+    margin: auto;
+  }
+
+  span {
+    background: var(--date-separator-bg);
+    padding: 6px 16px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--date-separator-text);
+    margin: 0 12px;
+    backdrop-filter: blur(2px);
+    border: 1px solid rgba(25, 118, 210, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.date-separator::before,
+.date-separator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(25, 118, 210, 0.1);
+  margin: auto 10px;
+}
+
+.message-wrapper {
+  clear: both;
+  margin-bottom: 12px;
 }

@@ -203,6 +203,19 @@ export class MessageComponent  implements OnInit, OnDestroy {
       this.goBackHome();
     }
   }
+
+  shouldShowDate(previousMessage: any, currentMessage: any): boolean {
+    if (!previousMessage) return true; // First message should show date
+    
+    const prevDate = new Date(previousMessage.timestamp?.seconds * 1000);
+    const currDate = new Date(currentMessage.timestamp?.seconds * 1000);
+    
+    return (
+      prevDate.getDate() !== currDate.getDate() ||
+      prevDate.getMonth() !== currDate.getMonth() ||
+      prevDate.getFullYear() !== currDate.getFullYear()
+    );
+  }
   
   goBackHome() {
     this.router.navigate(['/home']); // Or your home page route
