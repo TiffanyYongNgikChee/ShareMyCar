@@ -54,6 +54,7 @@ export class HomePage implements OnInit {
   filteredCars: any[] = [];
   featuredCars: any[] = [];
   isLoading = true;
+  allCars: any[] = [];
   
   // Filter properties
   searchQuery = '';
@@ -64,9 +65,14 @@ export class HomePage implements OnInit {
   selectedFuelType = '';
   showFilters = false;
 
+  carCategories = ['Sedan', 'SUV', 'Hatchback', 'Coupe', 'Convertible', 'Truck', 'Van'];
+  selectedCategory = 'All';
+
   // Location properties
   currentLocation = 'New York';
   showLocationPicker = false;
+
+  
 
   // Quick filters
   quickFilters = [
@@ -120,7 +126,26 @@ export class HomePage implements OnInit {
   async ngOnInit() {
     await this.loadCars();
   }
-
+  
+  private matchesSearchQuery(car: any): boolean {
+    if (!this.searchQuery) return true;
+    const query = this.searchQuery.toLowerCase();
+    return (
+      car.make_model.toLowerCase().includes(query) ||
+      car.pickup_location.toLowerCase().includes(query)
+    );
+  }
+  
+  private matchesOtherFilters(car: any): boolean {
+    return (
+      car.price_per_day >= this.priceRange.lower &&
+      car.price_per_day <= this.priceRange.upper &&
+      (this.selectedCarTypes.length === 0 || this.selectedCarTypes.includes(car.car_type)) &&
+      (!this.selectedTransmission || car.transmission === this.selectedTransmission) &&
+      (!this.selectedFuelType || car.fuel_type === this.selectedFuelType)
+    );
+  }
+  
   async loadCars() {
     this.carService.getAvailableCars().subscribe(async (cars) => {
       this.cars = await Promise.all(cars.map(async car => {
@@ -137,11 +162,35 @@ export class HomePage implements OnInit {
           features: car.features || []
         };
       }));
-      
+      this.allCars = [...this.cars]; // Store original unfiltered list
       this.filteredCars = [...this.cars];
       this.updateFeaturedCars();
       this.isLoading = false;
     });
+  }
+
+  // Add this method to filter cars by category
+  getCarsByCategory(category: string): any[] {
+    return this.filteredCars.filter(car => car.car_type === category).slice(0, 5);
+  }
+
+  // Add this method to handle category changes
+  filterByCategory() {
+    if (this.selectedCategory === 'All') {
+      this.applyFilters();
+    } else {
+      this.filteredCars = this.allCars.filter(car => 
+        car.car_type === this.selectedCategory && 
+        this.matchesSearchQuery(car) && 
+        this.matchesOtherFilters(car)
+      );
+    }
+  }
+
+  // Add this method to view all cars in a category
+  viewAllCategory(category: string) {
+    this.selectedCategory = category;
+    this.filterByCategory();
   }
 
   updateFeaturedCars() {

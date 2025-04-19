@@ -154,40 +154,41 @@
     </div>
   </div>
 
-  <!-- Car cards - Updated to use filteredCars -->
-  <div class="car-grid">
-    <ion-card *ngFor="let car of filteredCars" class="car-card" [routerLink]="['/car', car.id]">
-      <img [src]="car.images?.[0] || 'assets/default-car.jpg'" alt="{{car.make_model}}">
-      <ion-card-header>
-        <ion-card-title>{{car.make_model}}</ion-card-title>
-        <ion-card-subtitle>
-          {{car.year}} • {{car.car_type}} • {{car.seats}} seats
-        </ion-card-subtitle>
-      </ion-card-header>
-      
-      <ion-card-content>
-        <div class="car-details">
-          <div class="price">
-            <ion-text color="primary">
-              <h3>${{car.price_per_day}}/day</h3>
-            </ion-text>
-          </div>
-          
-          <div class="owner">
-            <ion-icon name="person-circle-outline"></ion-icon>
-            <ion-label>{{car.ownerName}}</ion-label>
-          </div>
-          
-          <div class="features" *ngIf="car.features?.length">
-            <ion-chip *ngFor="let feature of car.features" outline="true">
-              <ion-label>{{feature}}</ion-label>
-            </ion-chip>
-          </div>
-        </div>
+  <!-- Category Cards Section -->
+  <div class="category-section" *ngFor="let category of carCategories">
+    <div class="category-header">
+      <h2>{{category}}</h2>
+      <ion-button fill="clear" (click)="viewAllCategory(category)">View All</ion-button>
+    </div>
+    
+    <div class="horizontal-scroll">
+      <ion-card *ngFor="let car of getCarsByCategory(category)" class="car-card" [routerLink]="['/car', car.id]">
+        <img [src]="car.images?.[0] || 'assets/default-car.jpg'" alt="{{car.make_model}}">
+        <ion-card-header>
+          <ion-card-title>{{car.make_model}}</ion-card-title>
+          <ion-card-subtitle>
+            {{car.year}} • {{car.car_type}} • {{car.seats}} seats
+          </ion-card-subtitle>
+        </ion-card-header>
         
-        <ion-button expand="block" fill="solid">Details</ion-button>
-      </ion-card-content>
-    </ion-card>
+        <ion-card-content>
+          <div class="car-details">
+            <div class="price">
+              <ion-text color="primary">
+                <h3>${{car.price_per_day}}/day</h3>
+              </ion-text>
+            </div>
+            
+            <div class="owner">
+              <ion-icon name="person-circle-outline"></ion-icon>
+              <ion-label>{{car.ownerName}}</ion-label>
+            </div>
+          </div>
+          
+          <ion-button expand="block" fill="solid">Details</ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
   </div>
 
   <!-- Empty State -->
