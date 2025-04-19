@@ -13,6 +13,8 @@ import { addIcons } from 'ionicons';
 import {add,chatbubbleOutline,send,chatbubblesOutline,checkmarkDone,arrowBack,home} from 'ionicons/icons';
 import { getDocs, collection, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../main';
+import { Capacitor } from '@capacitor/core';
+import { Keyboard } from '@capacitor/keyboard';
 
 @Component({
   selector: 'app-message',
@@ -34,6 +36,8 @@ export class MessageComponent  implements OnInit, OnDestroy {
   isChatOpen = false;
 
   private subscriptions: Subscription[] = [];
+
+  showCustomKeyboard = false; // Controls custom keyboard visibility
 
   constructor(
     private messageService: MessageService,
@@ -224,4 +228,28 @@ export class MessageComponent  implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
+
+  async focusInput() {
+    const input = document.querySelector('.composer-input') as HTMLIonInputElement | null;
+  
+    if (input) {
+      await input.setFocus();
+  
+      // Only call the Keyboard plugin on native platforms
+      if (Capacitor.isNativePlatform()) {
+        await Keyboard.show();
+      }
+  
+      this.showCustomKeyboard = true;
+    }
+  }
+  
+  hideKeyboard() {
+    this.showCustomKeyboard = false;
+  
+    if (Capacitor.isNativePlatform()) {
+      Keyboard.hide();
+    }
+  }
+
 }

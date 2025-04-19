@@ -77,15 +77,18 @@
         </div>
       </ng-container>
     </div>
-
     <ion-footer class="message-composer">
       <ion-toolbar>
-        <ion-input
-          [(ngModel)]="newMessage"
-          placeholder="Type a message..."
-          (keyup.enter)="sendMessage()"
-          class="composer-input">
-        </ion-input>
+        <ion-item lines="none">
+          <ion-input
+            class="composer-input"
+            [(ngModel)]="newMessage"
+            placeholder="Type a message..."
+            (ionFocus)="showCustomKeyboard = true"
+            (ionBlur)="hideKeyboard()"
+            (keyup.enter)="sendMessage()">
+          </ion-input>
+        </ion-item>
         <ion-buttons slot="end">
           <ion-button (click)="sendMessage()" [disabled]="!newMessage.trim()" fill="clear">
             <ion-icon name="send" color="primary"></ion-icon>

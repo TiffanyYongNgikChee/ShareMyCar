@@ -253,3 +253,22 @@
   clear: both;
   margin-bottom: 12px;
 }
+
+.custom-keyboard {
+  background: var(--ion-color-light);
+  padding: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  animation: slide-up 0.3s ease;
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.composer-input {
+  --background: white;
+  border-radius: 20px;
+  border: 1px solid var(--ion-color-light-shade);
+  margin: 8px 0;
+}
