@@ -16,6 +16,7 @@ ion-content {
     font-weight: bold;
   }
 }
+
 .app-name{
   font-family: "Boldonse", system-ui;
   font-weight: 400;
@@ -198,4 +199,16 @@ ion-segment {
     flex: 0 0 33%;
     max-width: 33%;
   }
+}
+
+.category-header h2 {
+  font-size: 1.5rem;   
+  font-family: "Alfa Slab One", serif;
+  font-weight: 400;
+  font-style: normal;
+  color:rgb(20, 23, 160); 
+  margin: 16px 0;           
+  text-transform: uppercase; 
+  letter-spacing: 0.5px; 
+  text-align: center;    
 }

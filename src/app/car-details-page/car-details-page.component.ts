@@ -8,7 +8,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { register } from 'swiper/element/bundle';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { addIcons } from 'ionicons';
-import {colorFilterOutline,flashOutline, speedometerOutline,cogOutline} from 'ionicons/icons';
+import {colorFilterOutline,flashOutline, speedometerOutline,cogOutline,cashOutline,analyticsOutline} from 'ionicons/icons';
 import { ToastController } from '@ionic/angular';
 
 // Register Swiper custom elements
@@ -47,7 +47,9 @@ export class CarDetailsPageComponent  implements OnInit{
         flashOutline,
         colorFilterOutline,
         speedometerOutline,
-        cogOutline
+        cashOutline,
+        cogOutline,
+        analyticsOutline
         });
 
      }
