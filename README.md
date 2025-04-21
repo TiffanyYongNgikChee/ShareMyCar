@@ -25,3 +25,5 @@ npm install
 ionic serve
 
 This will launch the app in your default browser with live-reloading enabled.
+
+UserGuide: https://github.com/TiffanyYongNgikChee/ShareMyCar/wiki/Home-Page
