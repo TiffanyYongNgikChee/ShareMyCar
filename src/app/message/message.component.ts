@@ -24,21 +24,20 @@ import { Keyboard } from '@capacitor/keyboard';
 })
 export class MessageComponent  implements OnInit, OnDestroy {
   // Initialize properties to avoid definite assignment errors
-  conversations$: Observable<Conversation[]> = of([]);
-  activeChat$: Observable<Message[]> = of([]);
-  currentUserId: string = '';
-  selectedUserId: string | null = null;
-  newMessage = '';
-  isLoading = true;
-  hasConversations = false;
-  otherUserName: string = '';
-  messages: Message[] = []; // for local message storage
-  isChatOpen = false;
+  conversations$: Observable<Conversation[]> = of([]); // Holds the list of all conversations
+  activeChat$: Observable<Message[]> = of([]); // Not currently used, could be used for live chat updates
+  currentUserId: string = '';// ID of the current logged-in user
+  selectedUserId: string | null = null; // User ID of the selected conversation partner
+  newMessage = ''; // Message input from the user
+  isLoading = true; // Spinner control while loading data
+  hasConversations = false; // Toggle based on whether there are conversations
+  otherUserName: string = ''; // Name of the user you’re chatting with
+  messages: Message[] = []; // Stores messages locally for display
+  isChatOpen = false; // Whether the chat panel is open
 
-  private subscriptions: Subscription[] = [];
+  private subscriptions: Subscription[] = []; // Keeps track of live subscriptions to clean up
 
-  showCustomKeyboard = false; // Controls custom keyboard visibility
-
+  showCustomKeyboard = false; // Controls custom on-screen keyboard
   constructor(
     private messageService: MessageService,
     private authService: AuthService,
@@ -56,49 +55,49 @@ export class MessageComponent  implements OnInit, OnDestroy {
       home
       });
   }
-
+  // Component lifecycle hook: runs on component initialization
   async ngOnInit() {
-    console.log('Initializing MessageComponent'); // Debug 1
+    console.log('Initializing MessageComponent');
     const user = await this.authService.getCurrentUser();
     if (!user) {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/login']); // Redirect to login if not authenticated
       return;
     }
     this.currentUserId = user.uid;
-    console.log('Current user ID:', this.currentUserId); // Debug 3
+    console.log('Current user ID:', this.currentUserId); 
 
-    // Convert Promise to Observable
+    // Fetch conversations and determine if one is pre-selected via route
     this.conversations$ = new Observable<Conversation[]>(subscriber => {
-      console.log('Fetching conversations...'); // Debug 4
+      console.log('Fetching conversations...');
       this.messageService.getConversations().then(
         conversations => {
-          console.log('Conversations received:', conversations); // Debug 5
+          console.log('Conversations received:', conversations); 
           subscriber.next(conversations);
           subscriber.complete();
           this.hasConversations = conversations.length > 0;
           this.isLoading = false;
           
-          // Check if there's a user ID in the route
+          // If a conversation user ID is passed in the route, select it
           this.route.paramMap.subscribe(params => {
-            console.log('Route params:', params); // Debug 6
+            console.log('Route params:', params); 
             const userId = params.get('userId');
             if (userId) {
               this.selectConversation(userId);
             } else if (conversations.length > 0) {
               // Default to first conversation if none selected
-              this.selectConversation(conversations[0].userId);
+              this.selectConversation(conversations[0].userId); // Default to first
             }
           });
         },
         error => {
-          console.error('Error getting conversations:', error); // Debug 7
+          console.error('Error getting conversations:', error);
           subscriber.error(error);
         }
       );
     });
   }
 
-
+  // Select a conversation, load messages, and set up Firestore subscription
   async selectConversation(userId: string) {
     this.selectedUserId = userId;
     this.messages = []; // Clear previous messages
@@ -122,6 +121,7 @@ export class MessageComponent  implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  // Send message to selected user
   async sendMessage() {
     if (!this.newMessage.trim() || !this.selectedUserId) return;
 
@@ -152,7 +152,7 @@ export class MessageComponent  implements OnInit, OnDestroy {
       console.log('After send:', messages);
     });
   }
-
+  // Mark unread messages as read
   private markMessagesAsRead(messages: Message[]) {
     const unreadIds = messages
       .filter(m => m.receiverId === this.currentUserId && !m.read && m.id)
@@ -162,7 +162,7 @@ export class MessageComponent  implements OnInit, OnDestroy {
       this.messageService.markMessagesAsRead(unreadIds);
     }
   }
-
+  // Mark unread messages as read
   private async getCurrentUserName(): Promise<string> {
     const user = await this.authService.getCurrentUser();
     if (!user) return 'You';
@@ -170,7 +170,7 @@ export class MessageComponent  implements OnInit, OnDestroy {
     const userDoc = await getDoc(doc(db, 'users', user.uid));
     return userDoc.exists() ? userDoc.data()['username'] : 'You';
   }
-
+  // Open modal for starting a new message thread
   async openNewMessageModal() {
     const modal = await this.modalCtrl.create({
       component: NewMessageComponent,
@@ -187,19 +187,20 @@ export class MessageComponent  implements OnInit, OnDestroy {
       this.isChatOpen = true; // ⬅️ This will show the chat page
     }
   }
+  // Called when a chat is tapped in the UI
   openChat(conv: any) {
     this.selectedUserId = conv.userId;
     this.otherUserName = conv.userName;
     this.isChatOpen = true;
     this.selectConversation(conv.userId);
   }
-  
+  // Closes chat panel and resets related state
   closeChat() {
     this.selectedUserId = null;
     this.otherUserName = '';
     this.isChatOpen = false;
   }
-
+  // Handles custom back button behavior
   handleBackButton() {
     if (this.isChatOpen) {
       this.closeChat();
@@ -207,7 +208,7 @@ export class MessageComponent  implements OnInit, OnDestroy {
       this.goBackHome();
     }
   }
-
+  // Decide whether to display date above message bubble
   shouldShowDate(previousMessage: any, currentMessage: any): boolean {
     if (!previousMessage) return true; // First message should show date
     
@@ -220,15 +221,15 @@ export class MessageComponent  implements OnInit, OnDestroy {
       prevDate.getFullYear() !== currDate.getFullYear()
     );
   }
-  
+  // Navigate user back to the home page
   goBackHome() {
     this.router.navigate(['/home']); // Or your home page route
   }
-
+  // Lifecycle hook to clean up subscriptions
   ngOnDestroy() {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
-
+  // Focus the input and optionally show custom keyboard (native only)
   async focusInput() {
     const input = document.querySelector('.composer-input') as HTMLIonInputElement | null;
   
@@ -243,7 +244,7 @@ export class MessageComponent  implements OnInit, OnDestroy {
       this.showCustomKeyboard = true;
     }
   }
-  
+  // Hide custom keyboard on native platforms
   hideKeyboard() {
     this.showCustomKeyboard = false;
   

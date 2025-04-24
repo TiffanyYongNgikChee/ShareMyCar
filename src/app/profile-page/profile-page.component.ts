@@ -120,7 +120,7 @@ export class ProfilePageComponent implements OnInit{
             this.userData, 
             { merge: true }
           );
-          // Optional: Show success message
+  
         }
       } catch (error) {
         console.error('Update error:', error);

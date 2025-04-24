@@ -26,17 +26,18 @@ interface UserProfile {
 })
 export class NewMessageComponent implements OnInit {
 
-  allUsers: any[] = [];
-  filteredUsers: any[] = [];
-  searchQuery: string = '';
-  currentUserId = '';
-  existingChatUserIds: string[] = [];
+  allUsers: any[] = [];             // Full list of users
+  filteredUsers: any[] = [];        // Filtered by search
+  searchQuery: string = '';         // Bound to search input
+  currentUserId = '';               // User ID of the person logged in
+  existingChatUserIds: string[] = [];// For preventing duplicate chats (optional use)
 
   constructor(
     private modalCtrl: ModalController,
     private messageService: MessageService,
     private userService: UserService
   ) {
+    // Load icons for use in the UI
     addIcons({
       add,
       close,
@@ -53,14 +54,7 @@ export class NewMessageComponent implements OnInit {
       console.error('Error fetching users:', error);
     }
   }
-
-  async getAllUsersExceptCurrent(): Promise<UserProfile[]> {
-    // You can custo`mize this to fetch all users from Firestore directly
-    const response = await fetch('/assets/mock-users.json'); // replace with your actual DB fetch logic
-    const users: UserProfile[] = await response.json();
-    return users.filter(u => u.uid !== this.currentUserId);
-  }
-
+  // Real-time filtering of users based on the username field.
   onSearch(event: any) {
     const query = event.detail.value?.toLowerCase() || '';
     console.log('Search query:', query);
@@ -68,7 +62,7 @@ export class NewMessageComponent implements OnInit {
       user.username.toLowerCase().includes(query)
     );
   }
-
+  // Dismisses the modal and passes back the selected user’s ID.
   selectUser(user: UserProfile) {
     this.modalCtrl.dismiss({ selectedUserId: user.uid });
     

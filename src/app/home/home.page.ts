@@ -1,14 +1,16 @@
+// Angular core and common modules
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../main';
-import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
-import { CarService } from '../services/car.service';
-import { UserService } from '../services/user.service';
+import { FormsModule } from '@angular/forms'; // For two-way data binding
+import { IonicModule } from '@ionic/angular'; // Ionic components for mobile
+
+// Firebase and services
+import { AuthService } from '../services/auth.service';// Auth handling
+import { Router } from '@angular/router'; // Navigation
+import { CarService } from '../services/car.service';  // Handles car data
+import { UserService } from '../services/user.service'; // Gets user details
 import { RouterModule } from '@angular/router';
+// Icon imports
 import {
   personCircleOutline,
   personCircle,
@@ -40,17 +42,17 @@ import {
   flash,
   carSportOutline
 } from 'ionicons/icons';
-import { addIcons } from 'ionicons';
+import { addIcons } from 'ionicons'; // Manually registering used icons for performance
 
 @Component({
   selector: 'app-home',
-  standalone: true,
+  standalone: true, // Angular 14+ standalone component
   imports: [CommonModule, IonicModule, RouterModule, FormsModule],
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss']
 })
 export class HomePage implements OnInit {
-  cars: any[] = []; 
+  cars: any[] = []; // Consider defining a Car interface
   filteredCars: any[] = [];
   featuredCars: any[] = [];
   isLoading = true;
@@ -65,6 +67,7 @@ export class HomePage implements OnInit {
   selectedFuelType = '';
   showFilters = false;
 
+  // Car category selection
   carCategories = ['Sedan', 'SUV', 'Hatchback', 'Coupe', 'Convertible', 'Truck', 'Van'];
   selectedCategory = 'All';
 
@@ -72,9 +75,7 @@ export class HomePage implements OnInit {
   currentLocation = 'New York';
   showLocationPicker = false;
 
-  
-
-  // Quick filters
+  // Quick filters for UI shortcuts
   quickFilters = [
     { label: 'All', value: 'all', icon: '' },
     { label: 'Economy', value: 'economy', icon: 'cash' },
@@ -91,6 +92,7 @@ export class HomePage implements OnInit {
     private carService: CarService,
     private userService: UserService
   ) {
+    // Register icons to be used in the template
     addIcons({
       personCircleOutline,
       personCircle,
@@ -124,7 +126,7 @@ export class HomePage implements OnInit {
   }
 
   async ngOnInit() {
-    await this.loadCars();
+    await this.loadCars(); // Load cars on init
   }
   
   private matchesSearchQuery(car: any): boolean {

@@ -10,7 +10,6 @@ interface UserProfile {
   email: string;
   phone?: string;
   profilePicture?: string;
-  // Add other user fields you store
 }
 
 @Injectable({
